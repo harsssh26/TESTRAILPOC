@@ -1,0 +1,33 @@
+name: WebDriverIO Test + Upload to TestRail
+
+on:
+  workflow_dispatch: # <-- Manual trigger only
+
+jobs:
+  test-and-upload:
+    runs-on: ubuntu-latest
+
+    env:
+      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run WebDriverIO Tests
+        run: npm run test
+
+      - name: Upload Test Results to TestRail
+        run: npm run upload-results

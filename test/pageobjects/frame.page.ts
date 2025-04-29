@@ -45,6 +45,11 @@ class FramePage extends BasePage {
         await browser.switchToParentFrame();
         await browser.switchToParentFrame();
     }
+
+    async normalTest(): Promise<void>{
+        await this.switchToFrame(await this.frame2);
+        await browser.switchToParentFrame();
+    }
 }
 
 export default new FramePage();
