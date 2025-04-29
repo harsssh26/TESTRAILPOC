@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Install ts-node & TypeScript
-      run: npm install -g ts-node typescript
+        run: npm install -g ts-node typescript
   
       - name: Run WebDriverIO Tests
         run: npm run test
