@@ -28,9 +28,9 @@ jobs:
 
       - name: Install ts-node & TypeScript
         run: npm install -g ts-node typescript
-  
+
       - name: Run WebDriverIO Tests
         run: npm run test
 
       - name: Upload Test Results to TestRail
-        run: npm run upload-results
+        run: ts-node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts
