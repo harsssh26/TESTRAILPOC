@@ -33,4 +33,4 @@ jobs:
         run: npm run test
 
       - name: Upload Test Results to TestRail
-        run: npx ts-node ./test/testrail-cli/uploadResultsToTestRail.ts
+        run: npm run upload-results
