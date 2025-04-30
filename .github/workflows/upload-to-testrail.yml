@@ -1,7 +1,7 @@
 name: WebDriverIO Test + Upload to TestRail
 
 on:
-  workflow_dispatch: # manual trigger
+  workflow_dispatch:
 
 jobs:
   test-and-upload:
@@ -26,10 +26,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install ts-node & TypeScript
-        run: npm install -g ts-node typescript
-
-      - name: Run WebDriverIO Tests
+      - name: Run WebDriverIO Tests using ts-node/esm
         run: npm run test
 
       - name: Upload Test Results to TestRail

@@ -50,3 +50,6 @@ export const config: WebdriverIO.Config = {
     await browser.setWindowSize(1920, 1080);
   }
 };
+
+
+
