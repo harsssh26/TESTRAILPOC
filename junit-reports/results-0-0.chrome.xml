@@ -1,79 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="3" failures="2" errors="0" skipped="1">
-  <testsuite name="Frame Testing with WebDriverIO" timestamp="2025-04-30T16:57:07" time="8.027" tests="3" failures="2" errors="0" skipped="1">
+<testsuites tests="5" failures="2" errors="0" skipped="1">
+  <testsuite name="Frame Testing with WebDriverIO" timestamp="2025-05-01T22:14:54" time="21.15" tests="5" failures="2" errors="0" skipped="1">
     <properties>
       <property name="specId" value="0"/>
       <property name="suiteName" value="Frame Testing with WebDriverIO"/>
       <property name="capabilities" value="chrome.135_0_7049_115.mac"/>
       <property name="file" value="file://./test/specs/frame.test.ts"/>
     </properties>
-    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C3 should type into frame 1" time="8.022">
-      <failure message="write EPIPE"/>
+    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C3 should type into frame 1" time="10.322">
       <system-out><![CDATA[
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/url - {"url":"https://ui.vision/demo/webtest/frames/"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/url - {"url":"https://ui.vision/demo/webtest/frames/"}
 RESULT: {"url":"https://ui.vision/demo/webtest/frames/"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/element - {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
 RESULT: {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
 RESULT: {"using":"css selector","value":"frame[src=\"frame_1.html\"]"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","ELEMENT":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23"}]}
-RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","ELEMENT":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23"}]}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/frame - {"id":{"sessionId":"03f49038311ca8857583a274d1b0ba40","elementId":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","element-6066-11e4-a52e-4f735466cecf":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","selector":"frame[src=\"frame_1.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.hKfYZn"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:56578"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
-RESULT: {"id":{"sessionId":"03f49038311ca8857583a274d1b0ba40","elementId":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","element-6066-11e4-a52e-4f735466cecf":"f.232439A0D98B8ED9E2D969DCE607812D.d.0771A27702F8BD66AE1220DC7FAACB5D.e.23","selector":"frame[src=\"frame_1.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.hKfYZn"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:56578"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/element - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame - {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","selector":"frame[src=\"frame_1.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+RESULT: {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.495ED9FB74881E4E234CA9217067523A.e.23","selector":"frame[src=\"frame_1.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
 RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: DELETE /session/03f49038311ca8857583a274d1b0ba40 - {}
-COMMAND: POST /session/03f49038311ca8857583a274d1b0ba40/elements - {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='text']"}
+RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: GET /session/6cad56118d6c8c0117af825a2d67381b/source - {}
 RESULT: {}
-RESULT: {"using":"xpath","value":"//input[@name='text']"}
-COMMAND: POST /session/undefined/elements - {"using":"xpath","value":"//input[@name='text']"}
-RESULT: {"using":"xpath","value":"//input[@name='text']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//input[@name='mytext1']"}
+RESULT: {"using":"xpath","value":"//input[@name='mytext1']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//input[@name='mytext1']"}
+RESULT: {"using":"xpath","value":"//input[@name='mytext1']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//input[@name='mytext1']"}
+RESULT: {"using":"xpath","value":"//input[@name='mytext1']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18","ELEMENT":"f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18","ELEMENT":"f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element/f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18/clear - {}
+RESULT: {}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element/f.F0FB02D977B0A90039241D95C591E89B.d.832D37D2A9466BFF1EA48FF0310414AE.e.18/value - {"text":"Hello"}
+RESULT: {"text":"Hello"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame/parent - {}
+RESULT: {}
+]]></system-out>
+    </testcase>
+    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C4 should click checkbox in frame 3" time="9.234">
+      <system-out><![CDATA[
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/url - {"url":"https://ui.vision/demo/webtest/frames/"}
+RESULT: {"url":"https://ui.vision/demo/webtest/frames/"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"css selector","value":"frame[src=\"frame_3.html\"]"}
+RESULT: {"using":"css selector","value":"frame[src=\"frame_3.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"css selector","value":"frame[src=\"frame_3.html\"]"}
+RESULT: {"using":"css selector","value":"frame[src=\"frame_3.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame - {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","selector":"frame[src=\"frame_3.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+RESULT: {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BDACF60729E567524FAD875EA2D145DA.e.42","selector":"frame[src=\"frame_3.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"css selector","value":"iframe[src*=\"docs.google.com/forms\"]"}
+RESULT: {"using":"css selector","value":"iframe[src*=\"docs.google.com/forms\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"css selector","value":"iframe[src*=\"docs.google.com/forms\"]"}
+RESULT: {"using":"css selector","value":"iframe[src*=\"docs.google.com/forms\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","ELEMENT":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","ELEMENT":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame - {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","element-6066-11e4-a52e-4f735466cecf":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","selector":"iframe[src*=\"docs.google.com/forms\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+RESULT: {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","element-6066-11e4-a52e-4f735466cecf":"f.518F6D85D3C3206EA544B6303C9A9C5B.d.2A6D4A31DAC727FA740C7AB3F46DE3E2.e.43","selector":"iframe[src*=\"docs.google.com/forms\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']"}
+COMMAND: GET /session/6cad56118d6c8c0117af825a2d67381b/source - {}
+RESULT: {}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+RESULT: {"using":"xpath","value":"//div[@role='list']//label[@for='i21']"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21","ELEMENT":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21","ELEMENT":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21","ELEMENT":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21","ELEMENT":"f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element/f.64EB1D01A6510BA5BAEFE78EE6BFEF39.d.672A4902A7BE02952814AD4BBAFA133B.e.21/click - {}
+RESULT: {}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame/parent - {}
+RESULT: {}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame/parent - {}
+RESULT: {}
+]]></system-out>
+    </testcase>
+    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C5 should type into frame 2" time="1.285">
+      <failure message="connect ECONNREFUSED 127.0.0.1:65483"/>
+      <system-out><![CDATA[
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/url - {"url":"https://ui.vision/demo/webtest/frames/"}
+RESULT: {"url":"https://ui.vision/demo/webtest/frames/"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/element - {"using":"css selector","value":"frame[src=\"frame_2.html\"]"}
+RESULT: {"using":"css selector","value":"frame[src=\"frame_2.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/elements - {"using":"css selector","value":"frame[src=\"frame_2.html\"]"}
+RESULT: {"using":"css selector","value":"frame[src=\"frame_2.html\"]"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/execute/sync - {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61"}]}
+RESULT: {"script":"<script> [21 bytes]","args":[{"element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","ELEMENT":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61"}]}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/frame - {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","selector":"frame[src=\"frame_2.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
+COMMAND: DELETE /session/6cad56118d6c8c0117af825a2d67381b - {}
+RESULT: {"id":{"sessionId":"6cad56118d6c8c0117af825a2d67381b","elementId":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","element-6066-11e4-a52e-4f735466cecf":"f.DB9DED5BAEE027136EF3F469E4F1F0FB.d.BFB96954FFBEFFC3BB56306060060E74.e.61","selector":"frame[src=\"frame_2.html\"]","parent":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"135.0.7049.115","chrome":{"chromedriverVersion":"135.0.7049.115 (e624ba5948ffb9b6dcc98ae635ebe92ee09d242c-refs/branch-heads/7049@{#2176})","userDataDir":"/var/folders/d_/lwlf26_d12z30yck_zwfx_4r0000gp/T/.org.chromium.Chromium.JRsYTa"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:65488"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"mac","proxy":{},"_":"10 more keys: [\"setWindowRect\",\"strictFileInteractability\",\"timeouts\",\"unhandledPromptBehavior\",\"webauthn:extension:credBlob\",\"webauthn:extension:largeBlob\",\"webauthn:extension:minPinLength\",\"webauthn:extension:prf\",\"webauthn:virtualAuthenticators\",\"wdio:driverPID\"]"}},"isReactElement":false,"isShadowElement":false}}
 ]]></system-out>
       <system-err><![CDATA[
-Error: write EPIPE
-    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
-    at writeGeneric (node:internal/stream_base_commons:150:3)
-    at Socket._writeGeneric (node:net:971:11)
-    at Socket._write (node:net:983:8)
-    at writeOrBuffer (node:internal/streams/writable:570:12)
-    at _write (node:internal/streams/writable:499:10)
-    at Socket.Writable.write (node:internal/streams/writable:508:10)
-    at console.value (node:internal/console/constructor:298:16)
-    at console.info (node:internal/console/constructor:391:26)
-    at file:///Users/harshwardhan/testRailCLIPoc/node_modules/@wdio/logger/build/node.js:102:9
-    at Logger.info (/Users/harshwardhan/testRailCLIPoc/node_modules/loglevel-plugin-prefix/lib/loglevel-plugin-prefix.js:106:24)
-    at Browser.protocolCommand (file:///Users/harshwardhan/testRailCLIPoc/node_modules/webdriver/build/command.js:91:13)
-    at async Browser.wrapCommandFn (file:///Users/harshwardhan/testRailCLIPoc/node_modules/@wdio/utils/build/shim.js:90:29)
-    at async Browser.$$ (file:///Users/harshwardhan/testRailCLIPoc/node_modules/webdriverio/build/commands/browser/$$.js:46:11)
-    at async Browser.wrapCommandFn (file:///Users/harshwardhan/testRailCLIPoc/node_modules/@wdio/utils/build/shim.js:90:29)
-    at async Element.wrapCommandFn (file:///Users/harshwardhan/testRailCLIPoc/node_modules/@wdio/utils/build/shim.js:90:29)
+RequestError: connect ECONNREFUSED 127.0.0.1:65483
+    at Object.onceWrapper (node:events:622:26)
+    at ClientRequest.emit (node:events:519:35)
+    at ClientRequest.emit (node:domain:489:12)
+    at emitErrorEvent (node:_http_client:104:11)
+    at Socket.socketErrorListener (node:_http_client:518:5)
+    at Socket.emit (node:events:507:28)
+    at Socket.emit (node:domain:489:12)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1634:16)
 ]]></system-err>
     </testcase>
-    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C4 should click checkbox in frame 3" time="0">
+    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="C6 should type into frame 5 and click the link" time="0">
       <skipped/>
       <system-out><![CDATA[
-COMMAND: POST /session/undefined/url - {"url":"https://ui.vision/demo/webtest/frames/"}
+COMMAND: POST /session/6cad56118d6c8c0117af825a2d67381b/url - {"url":"https://ui.vision/demo/webtest/frames/"}
+RESULT: {}
 RESULT: {"url":"https://ui.vision/demo/webtest/frames/"}
 ]]></system-out>
     </testcase>
-    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="before each hook for Frame Testing with WebDriverIO" time="0.003">
-      <failure message="A sessionId is required for this command"/>
+    <testcase classname="chrome.135_0_7049_115.mac.Frame_Testing_with_WebDriverIO" name="before each hook for Frame Testing with WebDriverIO" time="0.308">
+      <failure message="connect ECONNREFUSED 127.0.0.1:65483"/>
       <system-err><![CDATA[
-Error: A sessionId is required for this command
-    at async FramePage.open (file:///Users/harshwardhan/testRailCLIPoc/test/pageobjects/base.page.ts:5:9)
-    at async Context.<anonymous> (file:///Users/harshwardhan/testRailCLIPoc/test/specs/frame.test.ts:5:9)
+RequestError: connect ECONNREFUSED 127.0.0.1:65483
+    at Object.onceWrapper (node:events:622:26)
+    at ClientRequest.emit (node:events:519:35)
+    at ClientRequest.emit (node:domain:489:12)
+    at emitErrorEvent (node:_http_client:104:11)
+    at Socket.socketErrorListener (node:_http_client:518:5)
+    at Socket.emit (node:events:507:28)
+    at Socket.emit (node:domain:489:12)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1634:16)
 ]]></system-err>
     </testcase>
   </testsuite>

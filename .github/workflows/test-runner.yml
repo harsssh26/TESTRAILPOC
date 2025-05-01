@@ -1,0 +1,53 @@
+name: WebDriverIO Sectioned Test Execution
+
+on:
+  workflow_call:
+    inputs:
+      scenario-tags:
+        required: true
+        type: string
+    secrets:
+      TESTRAIL_USERNAME:
+        required: true
+      TESTRAIL_API_TOKEN:
+        required: true
+      TESTRAIL_HOST:
+        required: true
+      TESTRAIL_PROJECT_ID:
+        required: true
+      TESTRAIL_SUITE_ID:
+        required: true
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Evaluate SCHEDULED_RUN
+        id: schedule_check
+        run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - name: Run WebDriverIO tests by scenario tag
+        run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
+
+      - name: Upload to TestRail (only if scheduled or first attempt)
+        if: steps.schedule_check.outputs.scheduled_run == 'true'
+        run: npm run upload-results
+        env:
+          TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+          TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+          TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+          SCHEDULED_RUN: true

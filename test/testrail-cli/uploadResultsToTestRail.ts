@@ -77,8 +77,9 @@ async function uploadResultsToTestRail() {
     }
 
     let runId = TESTRAIL_RUN_ID ? parseInt(TESTRAIL_RUN_ID, 10) : 0;
+    const isScheduledRun = process.env.SCHEDULED_RUN === 'true';
 
-    if (!runId) {
+    if (!runId && isScheduledRun) {
         const response = await client.post(`/add_run/${TESTRAIL_PROJECT_ID}`, {
             suite_id: TESTRAIL_SUITE_ID ? parseInt(TESTRAIL_SUITE_ID, 10) : undefined,
             name: `Automated Run ${new Date().toISOString()}`,
@@ -87,8 +88,11 @@ async function uploadResultsToTestRail() {
         });
         runId = response.data.id;
         console.log(`Created new TestRail Run: ${runId}`);
-    } else {
+    } else if (runId) {
         console.log(`Using existing TestRail Run: ${runId}`);
+    } else {
+        console.log(`Skipping TestRail run creation due to unscheduled re-run`);
+        return;
     }
 
     await client.post(`/add_results_for_cases/${runId}`, { results: testResults });

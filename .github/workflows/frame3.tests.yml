@@ -1,0 +1,16 @@
+name: Run Frame3 Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  frame3-test-run:
+    uses: ./.github/workflows/test-runner.yml
+    with:
+      scenario-tags: "frame3.test.ts"
+    secrets:
+      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
