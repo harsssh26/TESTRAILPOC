@@ -42,7 +42,7 @@ jobs:
         run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
 
       - name: Upload results to TestRail (if scheduled)
-        if: steps.schedule_check.outputs.scheduled_run == 'true'
+        if: "steps.schedule_check.outputs.scheduled_run == 'true'"
         run: |
           node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts
         env:
@@ -52,4 +52,3 @@ jobs:
           TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           SCHEDULED_RUN: true
-
