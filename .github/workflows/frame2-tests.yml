@@ -7,7 +7,7 @@ jobs:
   frame2-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: "frame2.test.ts"
+      scenario-tags: "frame2"
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

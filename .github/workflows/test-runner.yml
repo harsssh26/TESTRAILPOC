@@ -38,10 +38,10 @@ jobs:
         id: schedule_check
         run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
-      - name: Run WebDriverIO tests by scenario tag
+      - name: Run WebDriverIO tests by tag
         run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
 
-      - name: Upload to TestRail (only if scheduled or first attempt)
+      - name: Upload results to TestRail (if scheduled)
         if: steps.schedule_check.outputs.scheduled_run == 'true'
         run: npm run upload-results
         env:
