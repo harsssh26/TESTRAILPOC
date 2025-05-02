@@ -9,7 +9,11 @@ dotenv.config();
 const junitReportsPath = path.join(process.cwd(), 'junit-reports');
 
 async function parseJUnitReports() {
-    const files = fs.readdirSync(junitReportsPath).filter(file => file.endsWith('.xml'));
+    const onlyFile = process.env.RESULT_FILE;
+    const files = onlyFile
+        ? [onlyFile]
+        : fs.readdirSync(junitReportsPath).filter(file => file.endsWith('.xml'));
+
     const testResults: { case_id: number; status_id: number; comment: string }[] = [];
 
     for (const file of files) {

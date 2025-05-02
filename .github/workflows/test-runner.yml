@@ -6,6 +6,9 @@ on:
       scenario-tags:
         required: true
         type: string
+      result-file:
+        required: true
+        type: string
     secrets:
       TESTRAIL_USERNAME:
         required: true
@@ -49,6 +52,7 @@ jobs:
         run: |
           node --import tsx ./test/testrail-cli/uploadResultsToTestRail.ts
         env:
+          RESULT_FILE: ${{ inputs.result-file }}
           TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
           TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
           TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}

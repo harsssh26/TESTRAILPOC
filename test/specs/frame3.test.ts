@@ -5,128 +5,75 @@ describe('Frame Testing with WebDriverIO', () => {
     beforeEach(async () => {
         await framePage.open();
     });
-
-    it('[FRAME3] C24 test17', async () => {
+    it('[FRAME3] C70 test63', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C25 test18', async () => {
+    it('[FRAME3] C71 test64', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C26 test19', async () => {
+    it('[FRAME3] C72 test65', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C27 test20', async () => {
+    it('[FRAME3] C73 test66', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C28 test21', async () => {
+    it('[FRAME3] C74 test67', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C29 test22', async () => {
+    it('[FRAME3] C75 test68', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C30 test23', async () => {
+    it('[FRAME3] C76 test69', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C31 test24', async () => {
+    it('[FRAME3] C77 test70', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C32 test25', async () => {
+    it('[FRAME3] C78 test71', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C33 test26', async () => {
+    it('[FRAME3] C79 test72', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C34 test27', async () => {
+    it('[FRAME3] C80 test73', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C35 test28', async () => {
+    it('[FRAME3] C81 test74', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C36 test29', async () => {
+    it('[FRAME3] C82 test75', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C37 test30', async () => {
+    it('[FRAME3] C83 test76', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C38 test31', async () => {
+    it('[FRAME3] C84 test77', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C39 test32', async () => {
+    it('[FRAME3] C85 test78', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C40 test33', async () => {
+    it('[FRAME3] C86 test79', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C41 test34', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C42 test35', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C43 test36', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C44 test37', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C45 test38', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C46 test39', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C47 test40', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C48 test41', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C49 test42', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C50 test43', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C51 test44', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C52 test45', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C53 test46', async () => {
-        await framePage.normalTest();
-    });
-
-    it('[FRAME3] C54 test47', async () => {
+    it('[FRAME3] C87 test80', async () => {
         await framePage.normalTest();
     });
 });
