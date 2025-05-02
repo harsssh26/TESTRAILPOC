@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc",
         "test": "wdio run ./wdio.conf.ts",
-        "upload-results": "ts-node ./test/testrail-cli/uploadResultsToTestRail.ts"
+        "upload-results": "ts-node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts"
+
     },
     "devDependencies": {
         "@types/node": "^20.11.30",
