@@ -3,6 +3,7 @@ import path from 'path';
 import axios from 'axios';
 import { parseStringPromise } from 'xml2js';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 const junitReportsPath = path.join(process.cwd(), 'junit-reports');
@@ -24,16 +25,16 @@ async function parseJUnitReports() {
 
                 if (matches.length === 0) continue;
 
-                let status_id = 1; // passed
+                let status_id = 1;
                 let comment = 'Test passed';
 
                 if (test.failure) {
-                    status_id = 5; // failed
+                    status_id = 5;
                     const failureMessage = test.failure[0]?.$.message || 'Test failed';
                     const failureText = test.failure[0]?._ || '';
                     comment = `Failure: ${failureMessage}\n${failureText}`.trim();
                 } else if (test.skipped) {
-                    status_id = 4; // retest
+                    status_id = 4;
                     const skipMessage = test.skipped[0]?.$.message || 'Test skipped';
                     comment = `Skipped: ${skipMessage}`.trim();
                 }
@@ -45,18 +46,53 @@ async function parseJUnitReports() {
             }
         }
     }
+
     return testResults;
 }
 
-async function uploadResultsToTestRail() {
-    const TESTRAIL_HOST = process.env.TESTRAIL_HOST;
-    const TESTRAIL_USERNAME = process.env.TESTRAIL_USERNAME;
-    const TESTRAIL_API_TOKEN = process.env.TESTRAIL_API_TOKEN;
-    const TESTRAIL_PROJECT_ID = process.env.TESTRAIL_PROJECT_ID;
-    const TESTRAIL_SUITE_ID = process.env.TESTRAIL_SUITE_ID;
-    const TESTRAIL_RUN_ID = process.env.TESTRAIL_RUN_ID;
+async function getOrCreateTestRun(client: any, projectId: string, suiteId: number, testResults: any[]) {
+    const runName = 'Automated Run Demo';
 
-    if (!TESTRAIL_HOST || !TESTRAIL_USERNAME || !TESTRAIL_API_TOKEN || !TESTRAIL_PROJECT_ID) {
+    try {
+        const existingRuns = await client.get(`/get_runs/${projectId}`, {
+            params: {
+                is_completed: 0,
+                suite_id: suiteId,
+            },
+        });
+
+        const existing = existingRuns.data.find((run: any) => run.name === runName);
+        if (existing) {
+            console.log(`Using existing TestRail Run: ${existing.id}`);
+            return existing.id;
+        }
+    } catch (err: any) {
+        console.warn('Failed to fetch existing runs:', err.message);
+    }
+
+    const response = await client.post(`/add_run/${projectId}`, {
+        suite_id: suiteId,
+        name: runName,
+        include_all: false,
+        case_ids: testResults.map(r => r.case_id),
+    });
+
+    console.log(`Created new TestRail Run: ${response.data.id}`);
+    return response.data.id;
+}
+
+async function uploadResultsToTestRail() {
+    const {
+        TESTRAIL_HOST,
+        TESTRAIL_USERNAME,
+        TESTRAIL_API_TOKEN,
+        TESTRAIL_PROJECT_ID,
+        TESTRAIL_SUITE_ID,
+        TESTRAIL_RUN_ID,
+        SCHEDULED_RUN,
+    } = process.env;
+
+    if (!TESTRAIL_HOST || !TESTRAIL_USERNAME || !TESTRAIL_API_TOKEN || !TESTRAIL_PROJECT_ID || !TESTRAIL_SUITE_ID) {
         throw new Error('TestRail environment variables are not properly set.');
     }
 
@@ -70,26 +106,18 @@ async function uploadResultsToTestRail() {
     });
 
     const testResults = await parseJUnitReports();
-
     if (testResults.length === 0) {
         console.log('No test results found to upload.');
         return;
     }
 
     let runId = TESTRAIL_RUN_ID ? parseInt(TESTRAIL_RUN_ID, 10) : 0;
-    const isScheduledRun = process.env.SCHEDULED_RUN === 'true';
+    const isScheduledRun = SCHEDULED_RUN === 'true';
 
     if (!runId && isScheduledRun) {
-        const response = await client.post(`/add_run/${TESTRAIL_PROJECT_ID}`, {
-            suite_id: TESTRAIL_SUITE_ID ? parseInt(TESTRAIL_SUITE_ID, 10) : undefined,
-            name: `Automated Run Demo`,
-            include_all: false,
-            case_ids: testResults.map(r => r.case_id),
-        });
-        runId = response.data.id;
-        console.log(`Created new TestRail Run: ${runId}`);
+        runId = await getOrCreateTestRun(client, TESTRAIL_PROJECT_ID, parseInt(TESTRAIL_SUITE_ID), testResults);
     } else if (runId) {
-        console.log(`Using existing TestRail Run: ${runId}`);
+        console.log(`Using existing TestRail Run from ENV: ${runId}`);
     } else {
         console.log(`Skipping TestRail run creation due to unscheduled re-run`);
         return;
