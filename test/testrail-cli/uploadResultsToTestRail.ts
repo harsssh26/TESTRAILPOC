@@ -82,7 +82,7 @@ async function uploadResultsToTestRail() {
     if (!runId && isScheduledRun) {
         const response = await client.post(`/add_run/${TESTRAIL_PROJECT_ID}`, {
             suite_id: TESTRAIL_SUITE_ID ? parseInt(TESTRAIL_SUITE_ID, 10) : undefined,
-            name: `Automated Run ${new Date().toISOString()}`,
+            name: `Automated Run Demo`,
             include_all: false,
             case_ids: testResults.map(r => r.case_id),
         });
