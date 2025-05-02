@@ -2,6 +2,9 @@ name: Run Frame1 Tests
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "48 6 * * *"  # Runs at 12:18 PM IST daily
+
 
 jobs:
   frame1-test-run:
