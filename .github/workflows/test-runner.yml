@@ -38,9 +38,6 @@ jobs:
         id: schedule_check
         run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
-      - name: Debug scheduled_run evaluation
-          run: echo "Scheduled Run Check: ${{ steps.schedule_check.outputs.scheduled_run }}"  
-
       - name: Run WebDriverIO tests by tag
         run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
 
