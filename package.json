@@ -6,8 +6,7 @@
     "scripts": {
         "build": "tsc",
         "test": "wdio run ./wdio.conf.ts",
-        "upload-results": "ts-node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts"
-
+        "upload-results": "ts-node-esm ./test/testrail-cli/uploadResultsToTestRail.ts"
     },
     "devDependencies": {
         "@types/node": "^20.11.30",
@@ -19,6 +18,7 @@
         "@wdio/mocha-framework": "^8.32.2",
         "@wdio/spec-reporter": "^8.32.2",
         "ts-node": "^10.9.2",
+        "tsx": "^4.7.0",
         "typescript": "^5.3.3"
     },
     "dependencies": {

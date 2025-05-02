@@ -32,7 +32,10 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install tsx@^4.7.0 --save-dev
+          npx tsx --version
 
       - name: Evaluate SCHEDULED_RUN
         id: schedule_check
@@ -44,7 +47,7 @@ jobs:
       - name: Upload results to TestRail (if scheduled)
         if: "steps.schedule_check.outputs.scheduled_run == 'true'"
         run: |
-          node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts
+          node --import tsx ./test/testrail-cli/uploadResultsToTestRail.ts
         env:
           TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
           TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

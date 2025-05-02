@@ -1,2 +1,9 @@
 [
+  {
+    "original_locator": "nametext",
+    "error_message": "element (\"//input[@name='text']\") still not existing after 5000ms",
+    "suggested_locators": [
+      "//input[@name='mytext1']"
+    ]
+  }
 ]
