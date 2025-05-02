@@ -38,12 +38,17 @@ jobs:
         id: schedule_check
         run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
+      - name: Debug scheduled_run evaluation
+        run: echo "Scheduled Run Check: ${{ steps.schedule_check.outputs.scheduled_run }}"  
+
       - name: Run WebDriverIO tests by tag
         run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
 
       - name: Upload results to TestRail (if scheduled)
-        if: steps.schedule_check.outputs.scheduled_run == 'true'
-        run: npm run upload-results
+        if: always()
+        continue-on-error: true
+        run: |
+          node --loader ts-node/esm ./test/testrail-cli/uploadResultsToTestRail.ts
         env:
           TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
           TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
@@ -51,3 +56,4 @@ jobs:
           TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           SCHEDULED_RUN: true
+
