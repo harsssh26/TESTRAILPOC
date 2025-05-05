@@ -150,7 +150,8 @@ async function uploadResultsToTestRail() {
         return;
     }
 
-    await client.post(`/add_results_for_cases/${runId}`, { results: testResults });
+    // await client.post(`/add_results_for_cases/${runId}`, { results: testResults });
+    await client.post(`/add_results/${runId}`, { results: testResults });
     console.log(`Uploaded ${testResults.length} results to TestRail Run: ${runId}`);
 }
 
