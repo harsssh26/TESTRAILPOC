@@ -1,16 +1,2 @@
 [
-  {
-    "original_locator": "nametext",
-    "error_message": "element (\"//input[@name='text']\") still not existing after 5000ms",
-    "suggested_locators": [
-      "//input[@name='mytext1']"
-    ]
-  },
-  {
-    "original_locator": "classebfwi//fori21//rolelist",
-    "error_message": "element (\"//span[@role='list']//div[@class='eBFwI']//label[@for='i21']\") still not existing after 5000ms",
-    "suggested_locators": [
-      "//label[@for='i21']"
-    ]
-  }
 ]
