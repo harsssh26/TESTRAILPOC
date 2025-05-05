@@ -49,7 +49,7 @@ jobs:
       - name: Run filtered tests
         run: |
            echo "Running grep for: [${{ inputs.scenario-tags }}] [${{ inputs.tag-filter }}]"
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="[${{ inputs.scenario-tags }}] [${{ inputs.tag-filter }}]"
+           npx wdio run ./wdio.conf.ts --mochaOpts.grep="[${{ inputs.scenario-tags }}] [${{ inputs.tag-filter }}]"
 
       - name: Upload results to TestRail (if scheduled)
         if: "steps.schedule_check.outputs.scheduled_run == 'true'"
