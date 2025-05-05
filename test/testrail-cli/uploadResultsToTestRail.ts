@@ -7,6 +7,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const junitReportsPath = path.join(process.cwd(), 'junit-reports');
+const today = new Date().toISOString().split('T')[0]; // "2025-05-05"
+const runName = `Automated Run Demo - ${today}`;
+const cacheFile = path.join(process.cwd(), '.testrail-run.json');
+
 
 async function parseJUnitReports() {
     const onlyFile = process.env.RESULT_FILE;
@@ -54,36 +58,55 @@ async function parseJUnitReports() {
     return testResults;
 }
 
-async function getOrCreateTestRun(client: any, projectId: string, suiteId: number, testResults: any[]) {
-    const runName = 'Automated Run Demo';
+async function getOrCreateTestRun(client: any, projectId: string, suiteId: number, testResults: any[]): Promise<number> {
+    // Step 1: Use cache if exists
+    if (fs.existsSync(cacheFile)) {
+        try {
+            const cached = JSON.parse(fs.readFileSync(cacheFile, 'utf-8'));
+            if (cached?.date === today && typeof cached.run_id === 'number') {
+                console.log(`Using cached TestRail Run ID: ${cached.run_id}`);
+                return cached.run_id;
+            }
+        } catch (err) {
+            console.warn('Failed to read cache:', err.message);
+        }
+    }
 
+    // Step 2: Try finding existing run
     try {
-        const existingRuns = await client.get(`/get_runs/${projectId}`, {
+        const response = await client.get(`/get_runs/${projectId}`, {
             params: {
                 is_completed: 0,
                 suite_id: suiteId,
             },
         });
 
-        const existing = existingRuns.data.find((run: any) => run.name === runName);
+        const runs = Array.isArray(response.data) ? response.data : response.data.runs;
+        const existing = runs.find((run: any) => run.name === runName);
+
         if (existing) {
             console.log(`Using existing TestRail Run: ${existing.id}`);
+            fs.writeFileSync(cacheFile, JSON.stringify({ run_id: existing.id, date: today }, null, 2));
             return existing.id;
         }
     } catch (err: any) {
         console.warn('Failed to fetch existing runs:', err.message);
     }
 
-    const response = await client.post(`/add_run/${projectId}`, {
+    // Step 3: Create new run
+    const created = await client.post(`/add_run/${projectId}`, {
         suite_id: suiteId,
         name: runName,
         include_all: false,
         case_ids: testResults.map(r => r.case_id),
     });
 
-    console.log(`Created new TestRail Run: ${response.data.id}`);
-    return response.data.id;
+    const newRunId = created.data.id;
+    console.log(`Created new TestRail Run: ${newRunId}`);
+    fs.writeFileSync(cacheFile, JSON.stringify({ run_id: newRunId, date: today }, null, 2));
+    return newRunId;
 }
+
 
 async function uploadResultsToTestRail() {
     const {
