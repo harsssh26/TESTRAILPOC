@@ -3,7 +3,7 @@ name: Run Frame Tests - Weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 12 * * 1"  # 5:45 PM IST on Mondays
+    - cron: "00 13 * * 1"  # 6:30 PM IST on Mondays
 
 jobs:
   frame-test-weekly:
