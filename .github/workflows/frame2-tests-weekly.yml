@@ -3,14 +3,14 @@ name: Run Frame2 Tests - Weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "00 12 * * 1"  # 5:30 PM IST every Monday
+    - cron: "15 12 * * 1"  # 5:45 PM IST on Mondays
 
 jobs:
   frame2-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: '[FRAME2]'
-      tag-filter: '[WEEKLY]'
+      scenario-tags: 'FRAME2'
+      tag-filter: 'WEEKLY'
       result-file: 'results-0-2.chrome.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
