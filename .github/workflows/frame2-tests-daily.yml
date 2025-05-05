@@ -3,7 +3,7 @@ name: Run Frame2 Tests - Daily
 on:
   workflow_dispatch:
   schedule:
-    - cron: "18 8 * * *"
+    - cron: "10 9 * * *"
 
 jobs:
   frame2-test-run:
