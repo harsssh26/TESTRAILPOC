@@ -1,15 +1,16 @@
-name: Run Frame3 Tests
+name: Run Frame3 Tests - Daily
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 7 * * *"
+    - cron: "10 8 * * *"
 
 jobs:
   frame3-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
       scenario-tags: '[FRAME3]'
+      tag-filter: '[DAILY]'
       result-file: 'results-0-3.chrome.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}

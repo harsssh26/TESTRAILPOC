@@ -1,16 +1,17 @@
-name: Run Frame1 Tests
+name: Run Frame3 Tests - Weekly
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "35 7 * * *"
+    - cron: "30 6 * * 1"  # 11:00 AM IST every Monday
 
 jobs:
-  frame1-test-run:
+  frame3-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: '[FRAME1]'
-      result-file: 'results-0-1.chrome.xml'
+      scenario-tags: '[FRAME3]'
+      tag-filter: '[WEEKLY]'
+      result-file: 'results-0-3.chrome.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

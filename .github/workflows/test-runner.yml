@@ -6,6 +6,9 @@ on:
       scenario-tags:
         required: true
         type: string
+      tag-filter:
+        required: true
+        type: string
       result-file:
         required: true
         type: string
@@ -38,14 +41,13 @@ jobs:
         run: |
           npm ci
           npm install tsx@^4.7.0 --save-dev
-          npx tsx --version
 
       - name: Evaluate SCHEDULED_RUN
         id: schedule_check
         run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
-      - name: Run WebDriverIO tests by tag
-        run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}"
+      - name: Run filtered tests
+        run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}.*${{ inputs.tag-filter }}"
 
       - name: Upload results to TestRail (if scheduled)
         if: "steps.schedule_check.outputs.scheduled_run == 'true'"
