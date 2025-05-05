@@ -47,7 +47,9 @@ jobs:
         run: echo "scheduled_run=$([[ '${{ github.event_name }}' == 'schedule' && ${{ github.run_attempt }} == 1 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
       - name: Run filtered tests
-        run: npx wdio run ./wdio.conf.ts --mochaOpts.grep "${{ inputs.scenario-tags }}.*${{ inputs.tag-filter }}"
+        run: |
+          echo "Running grep for: [${{ inputs.scenario-tags }}] [${{ inputs.tag-filter }}]"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep "\[${{ inputs.scenario-tags }}\] \[${{ inputs.tag-filter }}\]"
 
       - name: Upload results to TestRail (if scheduled)
         if: "steps.schedule_check.outputs.scheduled_run == 'true'"
