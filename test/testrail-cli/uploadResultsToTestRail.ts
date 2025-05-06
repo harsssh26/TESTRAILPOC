@@ -85,10 +85,10 @@ async function uploadResultsToTestRail() {
 
     const isScheduledRun = SCHEDULED_RUN === 'true';
 
-    if (!isScheduledRun) {
-        console.log(`Skipping TestRail run creation due to unscheduled re-run`);
-        return;
-    }
+    // if (!isScheduledRun) {
+    //     console.log(`Skipping TestRail run creation due to unscheduled re-run`);
+    //     return;
+    // }
 
     const created = await client.post(`/add_run/${TESTRAIL_PROJECT_ID}`, {
         suite_id: parseInt(TESTRAIL_SUITE_ID, 10),
