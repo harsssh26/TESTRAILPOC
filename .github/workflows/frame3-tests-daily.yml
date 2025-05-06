@@ -3,7 +3,7 @@ name: Run Frame3 Tests - Daily
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 9 * * *"  # 2:45 PM IST every day
+    - cron: "58 8 * * *"  # 2:28 PM IST every day
 
 jobs:
   frame3-test-run:
