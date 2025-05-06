@@ -3,7 +3,7 @@ name: Run Frame Tests - Daily
 on:
   workflow_dispatch:
   schedule:
-    - cron: "12 10 * * *"  # 3:42 PM IST daily
+    - cron: "07 12 * * *"
 
 jobs:
   frame-test-run:
@@ -11,7 +11,6 @@ jobs:
     with:
       scenario-tags: 'FRAME'
       tag-filter: 'DAILY'
-      result-file: 'results-0-0.chrome.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

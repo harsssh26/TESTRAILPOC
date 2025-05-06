@@ -11,7 +11,6 @@ jobs:
     with:
       scenario-tags: 'FRAME2'
       tag-filter: 'WEEKLY'
-      result-file: 'results-0-2.chrome.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
