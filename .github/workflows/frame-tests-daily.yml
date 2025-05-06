@@ -3,7 +3,7 @@ name: Run Frame Tests - Daily
 on:
   workflow_dispatch:
   schedule:
-    - cron: "33 6 * * *"  # 12:03 PM IST = 06:33 UTC
+    - cron: "15 9 * * *"  # 2:45 PM IST every day
 
 jobs:
   frame-test-run:
