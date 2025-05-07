@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "21 21 * * 2"  # 3:00 AM IST = 21:30 UTC, every Tuesday
-
 jobs:
   frame1-test-run:
+    if: github.ref == 'refs/heads/qa'  # ✅ ensures job runs only on 'qa'
     uses: ./.github/workflows/test-runner.yml
     with:
       scenario-tags: 'FRAME1'

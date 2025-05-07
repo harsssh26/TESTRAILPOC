@@ -1,5 +1,6 @@
 // /test/pageobjects/frame.page.ts
 import BasePage from './base.page.js';
+import type { ChainablePromiseElement } from 'webdriverio';
 
 class FramePage extends BasePage {
     get frame1() { return $('frame[src="frame_1.html"]'); }
@@ -8,11 +9,18 @@ class FramePage extends BasePage {
     get frame3() { return $('frame[src="frame_3.html"]'); }
     get innerGoogleFormIframe() { return $('iframe[src*="docs.google.com/forms"]'); }
 
-    async switchToFrame(frameElement: WebdriverIO.Element): Promise<void> {
-        await frameElement.waitForExist({ timeout: 5000 });
-        await frameElement.waitForDisplayed({ timeout: 5000 });
-        await browser.switchToFrame(frameElement);
-    }
+    // async switchToFrame(frameElement: WebdriverIO.Element): Promise<void> {
+    //     await frameElement.waitForExist({ timeout: 5000 });
+    //     await frameElement.waitForDisplayed({ timeout: 5000 });
+    //     await browser.switchFrame(frameElement);
+    // }
+    async switchToFrame(frameElement: ChainablePromiseElement): Promise<void> {
+        const frame = await frameElement;
+        await frame.waitForExist({ timeout: 5000 });
+        await frame.waitForDisplayed({ timeout: 5000 });
+        await browser.switchFrame(frame);
+      }
+      
 
     async typeInFrame1(text: string): Promise<void> {
         await this.switchToFrame(await this.frame1);
@@ -37,7 +45,7 @@ class FramePage extends BasePage {
         await this.waitAndClick("//a[text()='https://a9t9.com']");
         await browser.switchToParentFrame();
     }
-
+    
     async clickInFrame3(): Promise<void> {
         await this.switchToFrame(await this.frame3);
         await this.switchToFrame(await this.innerGoogleFormIframe);

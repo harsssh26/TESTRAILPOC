@@ -54,26 +54,27 @@ export const config: WebdriverIO.Config = {
    */
   onPrepare: async function () {
     if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
-      const { default: WdioTestRailReporter } = await import('wdio-testrail-reporter');
+      const WdioTestRailReporter = require('./wdio-testrail-reporter');
+  
       config.reporters!.push([
         WdioTestRailReporter,
         {
-          testRailOptions: {
+          // 👇 FIX: `testRailsOptions` must be nested as expected
+          testRailsOptions: {
             domain: testRailDomain,
             username: testRailUserName,
             apiToken: testRailApiToken,
             projectId: parseInt(testRailProjectId!),
             suiteId: parseInt(testRailSuiteId!)
           },
-          reporterOptions: {
-            runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-            includeAll: false,
-            oneReport: true
-          }
+          runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
+          includeAll: false,
+          oneReport: true
         }
       ]);
     }
-  },
+  }
+  ,
   before: async () => {
     await browser.setWindowSize(1920, 1080);
   }
