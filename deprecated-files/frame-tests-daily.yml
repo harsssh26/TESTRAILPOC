@@ -1,0 +1,19 @@
+name: Run Frame Tests - Daily
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "55 11 * * *"
+    
+jobs:
+  frame-test-run:  
+    uses: ./.github/workflows/test-runner.yml
+    with:
+      scenario-tags: 'FRAME'
+      tag-filter: 'DAILY'
+    secrets:
+      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}

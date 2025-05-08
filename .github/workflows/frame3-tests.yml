@@ -1,0 +1,21 @@
+name: Run Frame3 Tests - Daily and Weekly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "35 13 * * *"
+    - cron: "50 13 * * 4"
+
+jobs:
+  frame3-test-run:
+    uses: ./.github/workflows/test-runner.yml
+    with:
+      scenario-tags: 'FRAME3'
+      tag-filter: 'DAILY|WEEKLY'
+      result-file: 'results-frame3.xml'
+    secrets:
+      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
