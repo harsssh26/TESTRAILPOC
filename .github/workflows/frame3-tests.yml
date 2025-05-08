@@ -10,7 +10,7 @@ jobs:
   frame3-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: 'FRAME3'
+      scenario-tags: 'FRAME3' 
       tag-filter: 'DAILY|WEEKLY'
       result-file: 'results-frame3.xml'
     secrets:
