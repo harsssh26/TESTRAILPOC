@@ -1,16 +1,16 @@
-name: Run Frame3 Tests - Weekly
+name: Run Frame2 Tests - Daily
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "21 21 * * 2"  # 3:00 AM IST = 21:30 UTC, every Tuesday
+    - cron: "55 11 * * *"
 
 jobs:
-  frame3-test-run:
+  frame2-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: 'FRAME3'
-      tag-filter: 'WEEKLY'
+      scenario-tags: 'FRAME2'
+      tag-filter: 'DAILY'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

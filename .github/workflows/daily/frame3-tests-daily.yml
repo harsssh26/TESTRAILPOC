@@ -1,16 +1,15 @@
-name: Run Frame Tests - Daily
+name: Run Frame3 Tests - Daily
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "6 11 * * *"
+    - cron: "55 11 * * *"
 
 jobs:
-  frame-test-run:
-    if: github.ref == 'refs/heads/qa'  # ✅ ensures job runs only on 'qa'
+  frame3-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: 'FRAME'
+      scenario-tags: 'FRAME3'
       tag-filter: 'DAILY'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}

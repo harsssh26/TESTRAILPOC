@@ -1,15 +1,15 @@
-name: Run Frame1 Tests - Weekly
+name: Run Frame2 Tests - Weekly
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "21 21 * * 2"  # 3:00 AM IST = 21:30 UTC, every Tuesday
+    - cron: "55 11 * * *""
+
 jobs:
-  frame1-test-run:
-    if: github.ref == 'refs/heads/qa'  # ✅ ensures job runs only on 'qa'
+  frame2-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: 'FRAME1'
+      scenario-tags: 'FRAME2'
       tag-filter: 'WEEKLY'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
