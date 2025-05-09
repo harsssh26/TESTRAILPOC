@@ -1,18 +1,15 @@
-name: Run Frame2 Tests - Daily and Weekly
+name: Run FRAME2 Tests - weekly
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "18 9 * * *"     # 2:48 PM IST → 09:18 AM UTC
-    - cron: "30 9 * * 4"     # 3:00 PM IST Thursday → 09:30 AM UTC Thursday
+    - cron: "20 9 * * *" 
+  workflow_dispatch:
 
 jobs:
-  frame2-test-run:
+  frame1-test-run:
     uses: ./.github/workflows/test-runner.yml
     with:
-      scenario-tags: 'FRAME2'
-      tag-filter: 'DAILY|WEEKLY'
-      result-file: 'results-frame2.xml'
+      test-path: './test/specs/weekly-regression-suite/frame2.tests.ts'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}

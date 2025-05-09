@@ -1,26 +1,53 @@
-// /wdio.conf.ts
-import { config as dotenvConfig } from 'dotenv';
+// wdio.conf.ts
 import type { Options } from '@wdio/types';
+import * as fs from 'fs';
+import { promisify } from 'util';
 
-dotenvConfig();
+// Debugger only in non-headless mode
+const debuggerOnFailure = true;
+
+// ENV variables
+export const isHeadless = process.env.HEADLESS === 'true' ? 'headless' : 'disable-infobars';
+export const testRailUserName = process.env.TEST_RAIL_USERNAME;
+export const testRailPassword = process.env.TEST_RAIL_PASSWORD;
 
 const isScheduled = process.env.SCHEDULED_RUN === 'true';
-const testRailUserName = process.env.TESTRAIL_USERNAME;
-const testRailApiToken = process.env.TESTRAIL_API_TOKEN;
-const testRailDomain = process.env.TESTRAIL_HOST;
-const testRailProjectId = process.env.TESTRAIL_PROJECT_ID;
-const testRailSuiteId = process.env.TESTRAIL_SUITE_ID;
 
-const reporters: Options.Testrunner['reporters'] = [
-    'spec',
-    ['allure', {
-      outputDir: 'allure-results',
-      disableWebdriverStepsReporting: true,
-      disableWebdriverScreenshotsReporting: false
-    }]
-  ];
+const istDate = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Kolkata',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+}).format(new Date());
 
-export const config: WebdriverIO.Config = {
+let orgSystemDate: string | undefined;
+
+
+// Reporters setup
+const customReporters: Options.Testrunner['reporters'] = [
+  'spec',
+  ['allure', {
+    outputDir: 'allure-results',
+    disableWebdriverStepsReporting: true,
+    disableWebdriverScreenshotsReporting: false,
+    addConsoleLogs: true,
+  }],
+];
+
+if (isScheduled) {
+  customReporters.push(['testrail', {
+    projectId: 35,
+    suiteId: 3311,
+    domain: 'sothebysdigitalqa.testrail.io',
+    username: testRailUserName,
+    apiToken: testRailPassword,
+    runName: `Automation Report - ${istDate}`,
+    oneReport: true,
+    includeAll: false
+  }]);
+}
+
+export const config: Options.Testrunner = {
   runner: 'local',
   autoCompileOpts: {
     autoCompile: true,
@@ -29,53 +56,49 @@ export const config: WebdriverIO.Config = {
       transpileOnly: true
     }
   },
-  specs: ['./test/specs/**/*.ts'],
+
+  specs: [
+    './test/specs/**/*.ts' // ignored if --spec is passed
+  ],
+  exclude: [],
+
   maxInstances: 1,
+
   capabilities: [{
     browserName: 'chrome',
     'goog:chromeOptions': {
-      args: ['--headless', '--disable-gpu']
+      args: ['disable-popup-blocking', 'disable-notifications', isHeadless]
     }
   }],
-  logLevel: 'info',
-  baseUrl: 'https://ui.vision/demo/webtest/frames/',
-  waitforTimeout: 10000,
+
+  bail: 0,
+  baseUrl: 'http://localhost',
+  waitforTimeout: 30000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
-  services: ['devtools'],
+
   framework: 'mocha',
-  reporters,
+  reporters: customReporters,
+
   mochaOpts: {
     ui: 'bdd',
-    timeout: 60000
+    timeout: 6000000
   },
-  /**
-   * Dynamically load the TestRail reporter at runtime using async import
-   */
-  onPrepare: async function () {
-    if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
-      const WdioTestRailReporter = require('./wdio-testrail-reporter');
-  
-      config.reporters!.push([
-        WdioTestRailReporter,
-        {
-          // 👇 FIX: `testRailsOptions` must be nested as expected
-          testRailsOptions: {
-            domain: testRailDomain,
-            username: testRailUserName,
-            apiToken: testRailApiToken,
-            projectId: parseInt(testRailProjectId!),
-            suiteId: parseInt(testRailSuiteId!)
-          },
-          runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-          includeAll: false,
-          oneReport: true
-        }
-      ]);
-    }
-  }
-  ,
+
   before: async () => {
     await browser.setWindowSize(1920, 1080);
+    await browser.maximizeWindow();
+  },
+
+  afterTest: async function (test, context, { error, passed }) {
+    if (!passed) {
+      await browser.takeScreenshot();
+      if (error && debuggerOnFailure && isHeadless !== 'headless') {
+        console.log("--------- ERROR ---------");
+        console.log(error);
+        console.log("--------- ERROR ---------");
+        await browser.debug();
+      }
+    }
   }
 };

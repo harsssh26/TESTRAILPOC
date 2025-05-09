@@ -1,15 +1,9 @@
-name: WebDriverIO Sectioned Test Execution
+name: WebDriverIO Dedicated Spec Executor
 
 on:
   workflow_call:
     inputs:
-      scenario-tags:
-        required: true
-        type: string
-      tag-filter:
-        required: true
-        type: string
-      result-file:
+      test-path:
         required: true
         type: string
     secrets:
@@ -25,7 +19,7 @@ on:
         required: true
 
 jobs:
-  run_tests:
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,12 +32,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: |
-          npm ci
-          npm install tsx@^4.7.0 --save-dev
-          npm install wdio-testrail-reporter --save-dev
-          npm install @types/wdio-testrail-reporter --save-dev
-
+        run: npm ci
 
       - name: Set ENV variables
         run: |
@@ -51,9 +40,8 @@ jobs:
           echo "TESTRAIL_HOST=${{ secrets.TESTRAIL_HOST }}" >> $GITHUB_ENV
           echo "TESTRAIL_USERNAME=${{ secrets.TESTRAIL_USERNAME }}" >> $GITHUB_ENV
           echo "TESTRAIL_API_TOKEN=${{ secrets.TESTRAIL_API_TOKEN }}" >> $GITHUB_ENV
-        shell: bash
 
-      - name: Run filtered tests
+      - name: Run tests
         run: |
-          echo "Running grep for: \[${{ inputs.scenario-tags }}\] \[${{ inputs.tag-filter }}\]"
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="\\[${{ inputs.scenario-tags }}\\] \\[${{ inputs.tag-filter }}\\]"
+          echo "Running spec: ${{ inputs.test-path }}"
+          npx wdio run wdio.conf.ts --spec ${{ inputs.test-path }}
