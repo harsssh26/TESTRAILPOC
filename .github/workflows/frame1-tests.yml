@@ -3,12 +3,12 @@ name: Run Tests - FRAME1 Daily & CK Weekly
 on:
   workflow_dispatch:
   schedule:
-    - cron: "12 11 * * *"   # 4:42 PM IST
-    - cron: "15 11 * * *"   # 4:45 PM IST
+    - cron: "33 11 * * *"   # 5:03 PM IST
+    - cron: "40 11 * * *"   # 5:10 PM IST
 
 jobs:
   run-daily-frame1-tests:
-    if: github.event.schedule == '12 11 * * *'
+    if: github.event.schedule == '33 11 * * *'
     uses: ./.github/workflows/test-runner.yml
     with:
       scenario-tags: 'FRAME1'
@@ -21,7 +21,7 @@ jobs:
       TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
 
   run-weekly-ck-tests:
-    if: github.event.schedule == '15 11 * * *'
+    if: github.event.schedule == '40 11 * * *'
     uses: ./.github/workflows/test-runner.yml
     with:
       scenario-tags: 'CK'
