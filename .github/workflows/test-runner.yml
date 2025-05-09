@@ -9,9 +9,6 @@ on:
       tag-filter:
         required: true
         type: string
-      result-file:
-        required: true
-        type: string
     secrets:
       TESTRAIL_USERNAME:
         required: true
