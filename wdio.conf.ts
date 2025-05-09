@@ -20,62 +20,56 @@ const reporters: Options.Testrunner['reporters'] = [
     }]
   ];
 
-export const config: WebdriverIO.Config = {
-  runner: 'local',
-  autoCompileOpts: {
-    autoCompile: true,
+  export const config: WebdriverIO.Config = {
+    runner: 'local',
+    autoCompile: true, // ✅ directly here in v9
     tsNodeOpts: {
       project: './tsconfig.json',
       transpileOnly: true
-    }
-  },
-  specs: ['./test/specs/**/*.ts'],
-  maxInstances: 1,
-  capabilities: [{
-    browserName: 'chrome',
-    'goog:chromeOptions': {
-      args: ['--headless', '--disable-gpu']
-    }
-  }],
-  logLevel: 'info',
-  baseUrl: 'https://ui.vision/demo/webtest/frames/',
-  waitforTimeout: 10000,
-  connectionRetryTimeout: 120000,
-  connectionRetryCount: 3,
-  services: ['devtools'],
-  framework: 'mocha',
-  reporters,
-  mochaOpts: {
-    ui: 'bdd',
-    timeout: 60000
-  },
-  /**
-   * Dynamically load the TestRail reporter at runtime using async import
-   */
-  onPrepare: async function () {
-    if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
-      const WdioTestRailReporter = require('./wdio-testrail-reporter');
+    }as any ,
+    specs: ['./test/specs/**/*.ts'],
+    maxInstances: 1,
+    capabilities: [{
+      browserName: 'chrome',
+      'goog:chromeOptions': {
+        args: ['--headless', '--disable-gpu']
+      }
+    }],
+    logLevel: 'info',
+    baseUrl: 'https://ui.vision/demo/webtest/frames/',
+    waitforTimeout: 10000,
+    connectionRetryTimeout: 120000,
+    connectionRetryCount: 3,
+    services: ['chromedriver'],
+    framework: 'mocha',
+    reporters,
+    mochaOpts: {
+      ui: 'bdd',
+      timeout: 60000
+    },
+    onPrepare: async function () {
+      if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
+        const WdioTestRailReporter = require('./wdio-testrail-reporter');
   
-      config.reporters!.push([
-        WdioTestRailReporter,
-        {
-          // 👇 FIX: `testRailsOptions` must be nested as expected
-          testRailsOptions: {
-            domain: testRailDomain,
-            username: testRailUserName,
-            apiToken: testRailApiToken,
-            projectId: parseInt(testRailProjectId!),
-            suiteId: parseInt(testRailSuiteId!)
-          },
-          runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-          includeAll: false,
-          oneReport: true
-        }
-      ]);
+        config.reporters!.push([
+          WdioTestRailReporter,
+          {
+            testRailsOptions: {
+              domain: testRailDomain,
+              username: testRailUserName,
+              apiToken: testRailApiToken,
+              projectId: parseInt(testRailProjectId!),
+              suiteId: parseInt(testRailSuiteId!)
+            },
+            runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
+            includeAll: false,
+            oneReport: true
+          }
+        ]);
+      }
+    },
+    before: async () => {
+      await browser.setWindowSize(1920, 1080);
     }
-  }
-  ,
-  before: async () => {
-    await browser.setWindowSize(1920, 1080);
-  }
-};
+  };
+  ;
