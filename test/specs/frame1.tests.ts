@@ -54,79 +54,79 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C36 test29', async () => {
+    it('[WEEKLY] [CK] C36 test29', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C37 test30', async () => {
+    it('[WEEKLY] [CK] C37 test30', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C38 test31', async () => {
+    it('[WEEKLY] [CK] C38 test31', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C39 test32', async () => {
+    it('[WEEKLY] [CK] C39 test32', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C40 test33', async () => {
+    it('[WEEKLY] [CK] C40 test33', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C41 test34', async () => {
+    it('[WEEKLY] [CK] C41 test34', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C42 test35', async () => {
+    it('[WEEKLY] [CK] C42 test35', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C43 test36', async () => {
+    it('[WEEKLY] [CK] C43 test36', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C44 test37', async () => {
+    it('[WEEKLY] [CK] C44 test37', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C45 test38', async () => {
+    it('[WEEKLY] [CK] C45 test38', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C46 test39', async () => {
+    it('[WEEKLY] [CK] C46 test39', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C47 test40', async () => {
+    it('[WEEKLY] [CK] C47 test40', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C48 test41', async () => {
+    it('[WEEKLY] [CK] C48 test41', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C49 test42', async () => {
+    it('[WEEKLY] [CK] C49 test42', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C50 test43', async () => {
+    it('[WEEKLY] [CK] C50 test43', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C51 test44', async () => {
+    it('[WEEKLY] [CK] C51 test44', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C52 test45', async () => {
+    it('[WEEKLY] [CK] C52 test45', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C53 test46', async () => {
+    it('[WEEKLY] [CK] C53 test46', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] [WEEKLY] C54 test47', async () => {
+    it('[WEEKLY] [CK] C54 test47', async () => {
         await framePage.normalTest();
     });
 });

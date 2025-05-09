@@ -1,18 +1,31 @@
-name: Run Frame1 Tests - Daily and Weekly
+name: Run Tests - FRAME1 Daily & CK Weekly
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "18 9 * * *"     # 2:48 PM IST → 09:18 AM UTC
-    - cron: "30 9 * * 4"     # 3:00 PM IST Thursday → 09:30 AM UTC Thursday
+    - cron: "45 9 * * *"   # 3:15 PM IST
+    - cron: "50 9 * * *"   # 3:20 PM IST
 
 jobs:
-  frame1-test-run:
+  run-daily-frame1-tests:
+    if: github.event.schedule == '18 9 * * *'
     uses: ./.github/workflows/test-runner.yml
     with:
       scenario-tags: 'FRAME1'
-      tag-filter: 'DAILY|WEEKLY'
-      result-file: 'results-frame1.xml'
+      tag-filter: 'DAILY'
+    secrets:
+      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+
+  run-weekly-ck-tests:
+    if: github.event.schedule == '30 9 * * 4'
+    uses: ./.github/workflows/test-runner.yml
+    with:
+      scenario-tags: 'CK'
+      tag-filter: 'WEEKLY'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
