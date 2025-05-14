@@ -27,9 +27,15 @@ on:
   workflow_dispatch:
     inputs:
       scenario-tags:
-        description: 'Scenario tags (e.g., FRAME, IFRAME)'
+        description: 'Select a scenario tag'
         required: true
+        type: choice
         default: 'FRAME'
+        options:
+          - FRAME
+          - IFRAME
+          - AFRAME
+          - BFRAME
       tag-filter:
         description: 'Frequency tags (e.g., DAILY, WEEKLY)'
         required: true
@@ -37,7 +43,7 @@ on:
 
   schedule:
     - cron: "20 11 * * *"     # 2:48 PM IST
-    - cron: "30 9 * * 4"     # 3:00 PM IST Thursday
+    - cron: "30 9 * * 4"      # 3:00 PM IST Thursday
 
 jobs:
   frame-test-run:
@@ -52,4 +58,3 @@ jobs:
       TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
       TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
       TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
-
