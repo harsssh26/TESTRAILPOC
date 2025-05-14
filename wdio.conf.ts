@@ -22,7 +22,7 @@ const reporters: Options.Testrunner['reporters'] = [
 
   export const config: WebdriverIO.Config = {
     runner: 'local',
-    autoCompile: true, // ✅ directly here in v9
+    autoCompile: true, 
     tsNodeOpts: {
       project: './tsconfig.json',
       transpileOnly: true

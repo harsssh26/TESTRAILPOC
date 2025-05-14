@@ -52,5 +52,7 @@ jobs:
 
       - name: Run filtered tests
         run: |
-          echo "Running grep for: [${{ inputs.scenario-tags }}] [${{ inputs.tag-filter }}]"
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="\\[(${{ inputs.scenario-tags }})\\]\\s\\[(${{ inputs.tag-filter }})\\]"
+          echo "Running grep for tags: [${{ inputs.scenario-tags }}] and frequency: [${{ inputs.tag-filter }}]"
+          TAGS_REGEX=$(echo "${{ inputs.scenario-tags }}" | sed 's/,/\\] \\[\\|\\[/g')
+          echo "Parsed grep regex: \\[${TAGS_REGEX}\\] \\[${{ inputs.tag-filter }}\\]"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="\\[${TAGS_REGEX}\\] \\[${{ inputs.tag-filter }}\\]"
