@@ -38,8 +38,9 @@ jobs:
         run: |
           npm ci
           npm install tsx@^4.7.0 --save-dev
-          npm install wdio-testrail-reporter --save-dev 
-
+          npm install wdio-testrail-reporter --save-dev
+          npm install wdio-chromedriver-service --save-dev
+          npm install chromedriver@136 --save-dev
 
       - name: Set ENV variables
         run: |
