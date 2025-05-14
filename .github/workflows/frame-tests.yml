@@ -21,40 +21,67 @@
 #       TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
 
 
-name: Run Frame Tests - Daily and Weekly
+# name: Run Frame Tests - Daily and Weekly
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       scenario-tags:
+#         description: 'Select a scenario tag'
+#         required: true
+#         type: choice
+#         default: 'FRAME'
+#         options:
+#           - FRAME
+#           - IFRAME
+#           - AFRAME
+#           - BFRAME
+#       tag-filter:
+#         description: 'Frequency tags (e.g., DAILY, WEEKLY)'
+#         required: true
+#         default: 'DAILY|WEEKLY'
+
+#   schedule:
+#     - cron: "20 11 * * *"     # 2:48 PM IST
+#     - cron: "30 9 * * 4"      # 3:00 PM IST Thursday
+
+# jobs:
+#   frame-test-run:
+#     uses: ./.github/workflows/test-runner.yml
+#     with:
+#       scenario-tags: ${{ github.event.inputs.scenario-tags || 'FRAME' }}
+#       tag-filter: ${{ github.event.inputs.tag-filter || 'DAILY|WEEKLY' }}
+#       result-file: 'results-frame.xml'
+#     secrets:
+#       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
+#       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
+#       TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+#       TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+#       TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
 
 on:
   workflow_dispatch:
     inputs:
-      scenario-tags:
-        description: 'Select a scenario tag'
-        required: true
-        type: choice
+      frame-group:
+        description: 'Choose a predefined Frame group'
+        required: false
         default: 'FRAME'
+        type: choice
         options:
           - FRAME
           - IFRAME
           - AFRAME
           - BFRAME
+          - FRAME,AFRAME
+          - IFRAME,BFRAME
+
+      custom-scenario-tags:
+        description: 'Enter custom scenario tags (comma-separated, e.g., AFRAME,BFRAME)'
+        required: false
+        default: ''
+
       tag-filter:
         description: 'Frequency tags (e.g., DAILY, WEEKLY)'
         required: true
         default: 'DAILY|WEEKLY'
 
-  schedule:
-    - cron: "20 11 * * *"     # 2:48 PM IST
-    - cron: "30 9 * * 4"      # 3:00 PM IST Thursday
-
-jobs:
-  frame-test-run:
-    uses: ./.github/workflows/test-runner.yml
-    with:
-      scenario-tags: ${{ github.event.inputs.scenario-tags || 'FRAME' }}
-      tag-filter: ${{ github.event.inputs.tag-filter || 'DAILY|WEEKLY' }}
-      result-file: 'results-frame.xml'
-    secrets:
-      TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
-      TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
-      TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
-      TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
-      TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
