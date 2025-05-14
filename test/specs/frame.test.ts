@@ -18,11 +18,11 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.typeInFrame2('Hello');
     });
 
-    it('[FRAME] [DAILY] C6 should type into frame 5 and click the link', async () => {
+    it('[AFRAME] [DAILY] C6 should type into frame 5 and click the link', async () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME] [DAILY] C7 test0', async () => {
+    it('[AFRAME] [DAILY] C7 test0', async () => {
         await framePage.normalTest();
     });
 
