@@ -56,7 +56,6 @@ jobs:
     with:
       scenario-tags: ${{ github.event.inputs.custom-scenario-tags != '' && github.event.inputs.custom-scenario-tags || github.event.inputs.frame-group }}
       tag-filter: ${{ github.event.inputs.tag-filter || 'DAILY|WEEKLY' }}
-      result-file: 'results-frame.xml'
     secrets:
       TESTRAIL_USERNAME: ${{ secrets.TESTRAIL_USERNAME }}
       TESTRAIL_API_TOKEN: ${{ secrets.TESTRAIL_API_TOKEN }}
