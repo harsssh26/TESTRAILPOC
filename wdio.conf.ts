@@ -20,26 +20,7 @@ const reporters: Options.Testrunner['reporters'] = [
     addConsoleLogs: true,
   }]
 ];
-
-if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
-  const WdioTestRailReporter = require('./wdio-testrail-reporter');
-  reporters.push([
-    WdioTestRailReporter,
-    {
-      testRailsOptions: {
-        domain: testRailDomain,
-        username: testRailUserName,
-        apiToken: testRailApiToken,
-        projectId: parseInt(testRailProjectId!),
-        suiteId: parseInt(testRailSuiteId!)
-      },
-      runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-      includeAll: false,
-      oneReport: true
-    }
-  ]);
-}
-
+skjdbkajsbdk
 export const config: WebdriverIO.Config = {
   runner: 'local',
   autoCompileOpts: {
@@ -49,9 +30,7 @@ export const config: WebdriverIO.Config = {
       transpileOnly: true
     }
   },
-  specs: [
-    './test/specs/**/*.ts'
-  ],
+  specs: ['./test/specs/**/*.ts'],
   exclude: [],
   maxInstances: 1,
   capabilities: [{
@@ -72,6 +51,30 @@ export const config: WebdriverIO.Config = {
     ui: 'bdd',
     timeout: 60000
   },
+
+  onPrepare: async function () {
+    if (isScheduled && testRailDomain && testRailUserName && testRailApiToken) {
+      const { default: WdioTestRailReporter } = await import('wdio-testrail-reporter');
+  
+      config.reporters!.push([
+        WdioTestRailReporter,
+        {
+          testRailsOptions: {
+            domain: testRailDomain,
+            username: testRailUserName,
+            apiToken: testRailApiToken,
+            projectId: parseInt(testRailProjectId!),
+            suiteId: parseInt(testRailSuiteId!)
+          },
+          runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
+          includeAll: false,
+          oneReport: true
+        }
+      ]);
+    }
+  }
+  ,
+
   before: async () => {
     await browser.setWindowSize(1920, 1080);
   }
