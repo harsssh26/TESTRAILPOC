@@ -1,59 +1,59 @@
-# name: WebDriverIO Sectioned Test Execution
+name: WebDriverIO Sectioned Test Execution
 
-# on:
-#   workflow_call:
-#     inputs:
-#       scenario-tags:
-#         required: true
-#         type: string
-#       tag-filter:
-#         required: true
-#         type: string
-#     secrets:
-#       TESTRAIL_USERNAME:
-#         required: true
-#       TESTRAIL_API_TOKEN:
-#         required: true
-#       TESTRAIL_HOST:
-#         required: true
-#       TESTRAIL_PROJECT_ID:
-#         required: true
-#       TESTRAIL_SUITE_ID:
-#         required: true
+on:
+  workflow_call:
+    inputs:
+      scenario-tags:
+        required: true
+        type: string
+      tag-filter:
+        required: true
+        type: string
+    secrets:
+      TESTRAIL_USERNAME:
+        required: true
+      TESTRAIL_API_TOKEN:
+        required: true
+      TESTRAIL_HOST:
+        required: true
+      TESTRAIL_PROJECT_ID:
+        required: true
+      TESTRAIL_SUITE_ID:
+        required: true
 
-# jobs:
-#   run_tests:
-#     runs-on: ubuntu-latest
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-#       - name: Install dependencies
-#         run: |
-#           npm ci
-#           npm install tsx@^4.7.0 --save-dev
-#           npm install wdio-testrail-reporter --save-dev
-#           npm install wdio-chromedriver-service --save-dev
-#           npm install chromedriver@136 --save-dev
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install tsx@^4.7.0 --save-dev
+          npm install wdio-testrail-reporter --save-dev
+          npm install wdio-chromedriver-service --save-dev
+          npm install chromedriver@136 --save-dev
 
-#       - name: Set ENV variables
-#         run: |
-#           echo "SCHEDULED_RUN=true" >> $GITHUB_ENV
-#           echo "TESTRAIL_HOST=${{ secrets.TESTRAIL_HOST }}" >> $GITHUB_ENV
-#           echo "TESTRAIL_USERNAME=${{ secrets.TESTRAIL_USERNAME }}" >> $GITHUB_ENV
-#           echo "TESTRAIL_API_TOKEN=${{ secrets.TESTRAIL_API_TOKEN }}" >> $GITHUB_ENV
-#         shell: bash
+      - name: Set ENV variables
+        run: |
+          echo "SCHEDULED_RUN=true" >> $GITHUB_ENV
+          echo "TESTRAIL_HOST=${{ secrets.TESTRAIL_HOST }}" >> $GITHUB_ENV
+          echo "TESTRAIL_USERNAME=${{ secrets.TESTRAIL_USERNAME }}" >> $GITHUB_ENV
+          echo "TESTRAIL_API_TOKEN=${{ secrets.TESTRAIL_API_TOKEN }}" >> $GITHUB_ENV
+        shell: bash
 
-#       - name: Run filtered tests
-#         run: |
-#           echo "Running grep for tags: [${{ inputs.scenario-tags }}] and frequency: [${{ inputs.tag-filter }}]"
-#           TAGS_REGEX=$(echo "${{ inputs.scenario-tags }}" | sed 's/,/\\] \\[${{ inputs.tag-filter }}\\]\|\\[/g')
-#           TAGS_REGEX="\\[${TAGS_REGEX}\\] \\[${{ inputs.tag-filter }}\\]"
-#           echo "Parsed grep regex: $TAGS_REGEX"
-#           npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS_REGEX"
+      - name: Run filtered tests
+        run: |
+          echo "Running grep for tags: [${{ inputs.scenario-tags }}] and frequency: [${{ inputs.tag-filter }}]"
+          TAGS_REGEX=$(echo "${{ inputs.scenario-tags }}" | sed 's/,/\\] \\[${{ inputs.tag-filter }}\\]\|\\[/g')
+          TAGS_REGEX="\\[${TAGS_REGEX}\\] \\[${{ inputs.tag-filter }}\\]"
+          echo "Parsed grep regex: $TAGS_REGEX"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS_REGEX"
