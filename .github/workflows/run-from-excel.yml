@@ -1,4 +1,4 @@
-name: Execute Tests Based on Excel Tag
+name: Execute Tests Based on Excel Tags
 
 on:
   workflow_dispatch:
@@ -24,8 +24,8 @@ jobs:
           npm ci
           npm install tsx xlsx --save-dev
 
-      - name: Read top tag from Excel
-        id: extract_tag
+      - name: Read tags from Excel
+        id: extract_tags
         run: |
           node -e "
           const fs = require('fs');
@@ -33,15 +33,24 @@ jobs:
           const workbook = xlsx.readFile('./tag-priority.xlsx');  // Path to the Excel file
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-          const tag = data[0]?.[0] || '';  // Reading first column from the first row
-          fs.writeFileSync('tag.txt', tag.trim());
+          
+          // Extract tags from the first column
+          const tags = data.map(row => row[0]).filter(tag => tag);
+          
+          // Save tags to file for use in the workflow
+          fs.writeFileSync('tags.txt', tags.join('\n'));
           "
 
-      - name: Read tag for Mocha grep
-        id: tag_var
-        run: echo "tag=$(cat tag.txt)" >> $GITHUB_OUTPUT
-
-      - name: Run tests for top tag
+      - name: Read tags from file
+        id: tags_var
         run: |
-          echo "Running test cases matching Mocha tag: '${{ steps.tag_var.outputs.tag }}'"
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="${{ steps.tag_var.outputs.tag }}"
+          echo "tags=$(cat tags.txt)" >> $GITHUB_ENV
+          echo "Tags read from Excel: ${{ env.tags }}"
+
+      - name: Run tests for tags
+        run: |
+          # Loop through each tag and run tests
+          for tag in $(echo "${{ env.tags }}" | tr '\n' ' '); do
+            echo "Running test cases matching Mocha tag: $tag"
+            npx wdio run ./wdio.conf.ts --mochaOpts.grep="\\$tag\\"
+          done
