@@ -48,9 +48,8 @@ jobs:
           echo "Tags read from Excel: ${{ env.tags }}"
 
       - name: Run tests for tags
-        run: |
-          # Loop through each tag and run tests
-          for tag in $(echo "${{ env.tags }}" | tr '\n' ' '); do
-            echo "Running test cases matching Mocha tag: $tag"
-            npx wdio run ./wdio.conf.ts --mochaOpts.grep="\\$tag\\"
-          done
+        run: | 
+            TAGS=$(cat tags.txt | sed 's/\[/\\[/g; s/\]/\\]/g')  # Escape brackets
+            echo "Running test cases matching Mocha tag: $TAGS"
+            npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
+          
