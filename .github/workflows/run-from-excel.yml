@@ -24,7 +24,7 @@ jobs:
           npm ci
           npm install xlsx --save-dev
 
-      - name: Extract and format tags from Excel
+      - name: Extract and escape tags from Excel
         id: extract_tags
         run: |
           node -e "
@@ -34,35 +34,40 @@ jobs:
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           const data = xlsx.utils.sheet_to_json(sheet, { header: 'A', defval: '' });
           
-          // Process tags: ensure brackets, escape for regex, and remove duplicates
+          // Process tags: ensure brackets and escape for regex
           const tags = [];
           for (let i = 1; i <= Object.keys(data).length; i++) {
             const cell = data[i]?.['A']?.trim();
             if (cell) {
-              // Add brackets if missing and escape for regex
               const formattedTag = cell.startsWith('[') ? cell : `[${cell}]`;
-              const escapedTag = formattedTag.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
-              if (!tags.includes(escapedTag)) {
-                tags.push(escapedTag);
-              }
+              const escapedTag = formattedTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
+              tags.push(escapedTag);
             }
           }
           
-          // Save as environment variable and file
-          const tagsStr = tags.join(',');
-          fs.writeFileSync('tags.txt', tagsStr);
-          console.log('Extracted tags:', tagsStr);
-          console.log(`::set-output name=tags::${tagsStr}`);
+          // Save to file (raw tags for display, escaped tags for grep)
+          fs.writeFileSync('tags_raw.txt', tags.map(t => t.replace(/\\\\/g, '\\')).join('\n'));
+          fs.writeFileSync('tags_escaped.txt', tags.join(','));
+          console.log('Extracted tags:', tags.join(', '));
           "
 
-      - name: Run WDIO tests with extracted tags
+      - name: Run tests with properly escaped tags
         run: |
-          # Read tags and run tests (already escaped in extraction step)
-          TAGS=$(cat tags.txt)
+          # Read the escaped tags (ready for grep)
+          TAGS=$(cat tags_escaped.txt)
           if [ -z "$TAGS" ]; then
-            echo "No tags found in Excel file!"
+            echo "Error: No tags found in Excel file!"
             exit 1
           fi
-          
-          echo "Running tests for tags: $TAGS"
+
+          echo "========================================"
+          echo "RAW TAGS FROM EXCEL:"
+          cat tags_raw.txt
+          echo "----------------------------------------"
+          echo "ESCAPED TAGS FOR MOCHA:"
+          echo "$TAGS"
+          echo "========================================"
+
+          # Run tests (tags are already escaped)
+          echo "Running: npx wdio run ./wdio.conf.ts --mochaOpts.grep=\"$TAGS\""
           npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
