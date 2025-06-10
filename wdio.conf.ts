@@ -1,52 +1,10 @@
 // wdio.conf.ts
 
 import { config as dotenvConfig } from 'dotenv';
-import type { Options, Services } from '@wdio/types';
-import type { Config as WDIOConfig } from '@wdio/sync';
 
 dotenvConfig(); // Load .env file
 
-// Load environment variables
-const isScheduled = process.env.SCHEDULED_RUN === 'true';
-const testRailUserName = process.env.TESTRAIL_USERNAME;
-const testRailApiToken = process.env.TESTRAIL_API_TOKEN;
-const testRailDomain = process.env.TESTRAIL_HOST;
-const testRailProjectId = process.env.TESTRAIL_PROJECT_ID;
-const testRailSuiteId = process.env.TESTRAIL_SUITE_ID;
-
-// Build the reporters array conditionally
-const reporters: Options.Testrunner['reporters'] = [
-  'spec',
-  ['allure', {
-    outputDir: 'allure-results',
-    disableWebdriverStepsReporting: true,
-    disableWebdriverScreenshotsReporting: false,
-    addConsoleLogs: true,
-  }]
-];
-
-// Conditionally add TestRail reporter
-if (isScheduled && testRailUserName && testRailApiToken && testRailDomain && testRailProjectId && testRailSuiteId) {
-  const TestRailReporter = require('wdio-testrail-reporter').default;
-  reporters.push([
-    TestRailReporter,
-    {
-      testRailsOptions: {
-        domain: testRailDomain,
-        username: testRailUserName,
-        apiToken: testRailApiToken,
-        projectId: parseInt(testRailProjectId, 10),
-        suiteId: parseInt(testRailSuiteId, 10),
-      },
-      runName: `Automation Run - ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`,
-      includeAll: false,
-      oneReport: true,
-    }
-  ]);
-}
-
-// WDIO Configuration
-export const config: WDIOConfig = {
+export const config: any = {
   runner: 'local',
 
   autoCompileOpts: {
@@ -78,7 +36,16 @@ export const config: WDIOConfig = {
   services: ['chromedriver'],
 
   framework: 'mocha',
-  reporters,
+
+  reporters: [
+    'spec',
+    ['allure', {
+      outputDir: 'allure-results',
+      disableWebdriverStepsReporting: true,
+      disableWebdriverScreenshotsReporting: false,
+      addConsoleLogs: true,
+    }]
+  ],
 
   mochaOpts: {
     ui: 'bdd',
