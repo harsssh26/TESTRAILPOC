@@ -22,34 +22,47 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm install tsx xlsx --save-dev
+          npm install xlsx --save-dev
 
-      - name: Read tags from Excel
+      - name: Extract and format tags from Excel
         id: extract_tags
         run: |
           node -e "
           const fs = require('fs');
           const xlsx = require('xlsx');
-          const workbook = xlsx.readFile('./tag-priority.xlsx');  // Path to the Excel file
+          const workbook = xlsx.readFile('./tag-priority.xlsx');
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+          const data = xlsx.utils.sheet_to_json(sheet, { header: 'A', defval: '' });
           
-          // Extract tags from the first column
-          const tags = data.map(row => row[0]).filter(tag => tag);
+          // Process tags: ensure brackets, escape for regex, and remove duplicates
+          const tags = [];
+          for (let i = 1; i <= Object.keys(data).length; i++) {
+            const cell = data[i]?.['A']?.trim();
+            if (cell) {
+              // Add brackets if missing and escape for regex
+              const formattedTag = cell.startsWith('[') ? cell : `[${cell}]`;
+              const escapedTag = formattedTag.replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+              if (!tags.includes(escapedTag)) {
+                tags.push(escapedTag);
+              }
+            }
+          }
           
-          // Save tags to file for use in the workflow
-          fs.writeFileSync('tags.txt', tags.join('\n'));
+          // Save as environment variable and file
+          const tagsStr = tags.join(',');
+          fs.writeFileSync('tags.txt', tagsStr);
+          console.log('Extracted tags:', tagsStr);
+          console.log(`::set-output name=tags::${tagsStr}`);
           "
 
-      - name: Read tags from file
-        id: tags_var
+      - name: Run WDIO tests with extracted tags
         run: |
-          echo "tags=$(cat tags.txt)" >> $GITHUB_ENV
-          echo "Tags read from Excel: ${{ env.tags }}"
-
-      - name: Run tests for tags
-        run: | 
-            TAGS=$(cat tags.txt | sed 's/\[/\\[/g; s/\]/\\]/g')  # Escape brackets
-            echo "Running test cases matching Mocha tag: $TAGS"
-            npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
+          # Read tags and run tests (already escaped in extraction step)
+          TAGS=$(cat tags.txt)
+          if [ -z "$TAGS" ]; then
+            echo "No tags found in Excel file!"
+            exit 1
+          fi
           
+          echo "Running tests for tags: $TAGS"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
