@@ -5,7 +5,7 @@ describe('Frame Testing with WebDriverIO', () => {
     beforeEach(async () => {
         await framePage.open();
     });
-    it('[FRAME3] [DAILY] C70 test63', async () => {
+    it('[CK] [DAILY] C70 test63', async () => {
         await framePage.normalTest();
     });
 
