@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'tag-priority.xlsx'  # Trigger when this file is changed
+      - 'tag-priority.xlsx'
 
 jobs:
   run-priority-tests:
@@ -28,20 +28,20 @@ jobs:
         id: extract_tag
         run: |
           node -e "
-            const fs = require('fs');
-            const xlsx = require('xlsx');
-            const workbook = xlsx.readFile('./tag-priority.xlsx');  # Path to the Excel file
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];  # Read the first sheet
-            const data = xlsx.utils.sheet_to_json(sheet);
-            const tag = data[0]?.TestCaseTag || '';  # Get the first row's tag
-            fs.writeFileSync('tag.txt', tag.trim());  # Write the tag to a file
+          const fs = require('fs');
+          const xlsx = require('xlsx');
+          const workbook = xlsx.readFile('./tag-priority.xlsx');  // Path to the Excel file
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+          const tag = data[0]?.[0] || '';  // Reading first column from the first row
+          fs.writeFileSync('tag.txt', tag.trim());
           "
 
       - name: Read tag for Mocha grep
         id: tag_var
-        run: echo "tag=$(cat tag.txt)" >> $GITHUB_OUTPUT  # Store the tag to use in the next step
+        run: echo "tag=$(cat tag.txt)" >> $GITHUB_OUTPUT
 
       - name: Run tests for top tag
         run: |
           echo "Running test cases matching Mocha tag: '${{ steps.tag_var.outputs.tag }}'"
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="${{ steps.tag_var.outputs.tag }}"  # Pass tag to Mocha
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="${{ steps.tag_var.outputs.tag }}"
