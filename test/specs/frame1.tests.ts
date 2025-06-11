@@ -14,7 +14,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C26 test19', async () => {
+    it('[MAC] C26 test19', async () => {
         await framePage.normalTest();
     });
 
@@ -26,7 +26,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C29 test22', async () => {
+    it('[MAC] C29 test22', async () => {
         await framePage.normalTest();
     });
 
@@ -54,7 +54,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C36 test29', async () => {
+    it('[MAC] C36 test29', async () => {
         await framePage.normalTest();
     });
 
@@ -74,7 +74,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C41 test34', async () => {
+    it('[MAC] C41 test34', async () => {
         await framePage.normalTest();
     });
 
@@ -114,7 +114,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C51 test44', async () => {
+    it('[MAC] C51 test44', async () => {
         await framePage.normalTest();
     });
 
@@ -122,7 +122,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME1] C53 test46', async () => {
+    it('[MAC] C53 test46', async () => {
         await framePage.normalTest();
     });
 

@@ -39,10 +39,12 @@ jobs:
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
+            const tagFilters = ['[FRAME]'];
             const tags = [];
+
             for (let i = 1; i < data.length; i++) {
               const cell = (data[i][0] || '').toString().trim();
-              if (!cell || !cell.includes('[FRAME]')) continue;
+              if (!cell || !tagFilters.some(tag => cell.includes(tag))) continue;
               const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
               const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
               tags.push({ raw: rawTag, escaped: escapedTag });
@@ -82,5 +84,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git rm -f tag-priority.xlsx || true
-          git commit -m "Remove tag-priority.xlsx post FRAME1 test run" || echo "Nothing to commit"
+          git commit -m "Remove tag-priority.xlsx post FRAME test run" || echo "Nothing to commit"
           git push origin || echo "Nothing to push"
+ 

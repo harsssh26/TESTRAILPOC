@@ -28,9 +28,9 @@ jobs:
           npm install xlsx --save-dev
           npm install jq --save-dev
 
-      - name: Extract FRAME1 tags from Excel
+      - name: Extract FRAME1/MAC tags from Excel
         run: |
-          echo "Reading Excel and filtering FRAME1 tags..."
+          echo "Reading Excel and filtering FRAME1/MAC tags..."
 
           node -e "
             const fs = require('fs');
@@ -39,17 +39,19 @@ jobs:
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
+            const tagFilters = ['[FRAME1]', '[MAC]'];
             const tags = [];
+
             for (let i = 1; i < data.length; i++) {
               const cell = (data[i][0] || '').toString().trim();
-              if (!cell || !cell.includes('[FRAME1]')) continue;
+              if (!cell || !tagFilters.some(tag => cell.includes(tag))) continue;
               const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
               const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
               tags.push({ raw: rawTag, escaped: escapedTag });
             }
 
             if (tags.length === 0) {
-              console.error('No FRAME1 tags found!');
+              console.error('No FRAME1 or MAC tags found!');
               process.exit(1);
             }
 
@@ -59,7 +61,7 @@ jobs:
       - name: Run FRAME1 tests
         run: |
           TAG_COUNT=$(jq length tag_list.json)
-          echo "Found $TAG_COUNT FRAME1 tags"
+          echo "Found $TAG_COUNT FRAME1/MAC tags"
 
           for i in $(seq 0 $((TAG_COUNT - 1))); do
             RAW=$(jq -r ".[$i].raw" tag_list.json)
@@ -84,3 +86,4 @@ jobs:
           git rm -f tag-priority.xlsx || true
           git commit -m "Remove tag-priority.xlsx post FRAME1 test run" || echo "Nothing to commit"
           git push origin || echo "Nothing to push"
+ 
