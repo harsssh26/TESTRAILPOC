@@ -1,0 +1,86 @@
+name: FRAME Tests via Excel Tags
+
+on:
+  push:
+    paths:
+      - 'tag-priority.xlsx'
+
+jobs:
+  run-FRAME-tests:
+    if: github.event.head_commit.message != ''
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install xlsx --save-dev
+          npm install jq --save-dev
+
+      - name: Extract FRAME tags from Excel
+        run: |
+          echo "Reading Excel and filtering FRAME tags..."
+
+          node -e "
+            const fs = require('fs');
+            const xlsx = require('xlsx');
+            const workbook = xlsx.readFile('tag-priority.xlsx');
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+
+            const tags = [];
+            for (let i = 1; i < data.length; i++) {
+              const cell = (data[i][0] || '').toString().trim();
+              if (!cell || !cell.includes('[FRAME]')) continue;
+              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
+              const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
+              tags.push({ raw: rawTag, escaped: escapedTag });
+            }
+
+            if (tags.length === 0) {
+              console.error('No FRAME tags found!');
+              process.exit(1);
+            }
+
+            fs.writeFileSync('tag_list.json', JSON.stringify(tags, null, 2));
+          "
+
+      - name: Run FRAME tests
+        run: |
+          TAG_COUNT=$(jq length tag_list.json)
+          echo "Found $TAG_COUNT FRAME tags"
+
+          for i in $(seq 0 $((TAG_COUNT - 1))); do
+            RAW=$(jq -r ".[$i].raw" tag_list.json)
+            ESCAPED=$(jq -r ".[$i].escaped" tag_list.json)
+
+            echo "Running test for tag: $RAW"
+            npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee output_$i.log
+
+            if grep -q '0 passed' output_$i.log; then
+              echo "$RAW" >> missing-tags.txt
+            fi
+          done
+
+      - name: Clean up Excel and logs
+        run: |
+          rm -f tag_list.json output_*.log
+
+      - name: Remove tag-priority.xlsx from repo
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git rm -f tag-priority.xlsx || true
+          git commit -m "Remove tag-priority.xlsx post FRAME1 test run" || echo "Nothing to commit"
+          git push origin || echo "Nothing to push"
