@@ -28,48 +28,44 @@ jobs:
         id: extract_tags
         run: |
           node -e "
-          const fs = require('fs');
-          const xlsx = require('xlsx');
-          const workbook = xlsx.readFile('./tag-priority.xlsx');
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
+            const fs = require('fs');
+            const xlsx = require('xlsx');
+            const workbook = xlsx.readFile('./tag-priority.xlsx');
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
-          const tags = [];
+            const tags = [];
 
-          for (let i = 1; i < data.length; i++) {
-            const cell = (data[i][0] || '').toString().trim();
-            if (!cell) continue;
+            for (let i = 1; i < data.length; i++) {
+              const cell = (data[i][0] || '').toString().trim();
+              if (!cell) continue;
 
-            const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-            const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
-            tags.push(escapedTag);
-          }
+              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
+              const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
+              tags.push(escapedTag);
+            }
 
-          if (tags.length === 0) {
-            console.error('❌ No valid tags found in Excel!');
-            process.exit(1);
-          }
+            if (tags.length === 0) {
+              console.error('❌ No valid tags found in Excel!');
+              process.exit(1);
+            }
 
-          fs.writeFileSync('tags_raw.txt', tags.map(t => t.replace(/\\\\/g, '\\')).join('\n'));
-          fs.writeFileSync('tags_escaped.txt', tags.join('|')); // "|" for OR match in grep
-          console.log('✅ Tags extracted and saved.');
+            fs.writeFileSync('tags_raw.txt', tags.map(t => t.replace(/\\\\/g, '\\')).join('\\n'));
+            fs.writeFileSync('tags_escaped.txt', tags.join('|'));
+            console.log('✅ Tags extracted and saved.');
           "
 
-      - name: Run tests using tags
+      - name: Run tests with tags
         run: |
           TAGS=$(cat tags_escaped.txt)
-          if [ -z "$TAGS" ]; then
-            echo "❌ No tags to run."
-            exit 1
-          fi
 
           echo "========================================"
-          echo "📦 RAW TAGS:"
+          echo "RAW TAGS:"
           cat tags_raw.txt
           echo "----------------------------------------"
-          echo "🔍 GREP PATTERN:"
+          echo "ESCAPED GREP STRING:"
           echo "$TAGS"
           echo "========================================"
 
-          echo "Running: npx wdio run ./wdio.conf.ts --mochaOpts.grep=\"$TAGS\""
+          echo "Running test cases with tags..."
           npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
