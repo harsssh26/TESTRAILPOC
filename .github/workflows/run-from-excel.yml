@@ -42,7 +42,7 @@ jobs:
 
               const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
               const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
-              tags.push(escapedTag);
+              tags.push({ raw: rawTag, escaped: escapedTag });
             }
 
             if (tags.length === 0) {
@@ -50,8 +50,8 @@ jobs:
               process.exit(1);
             }
 
-            fs.writeFileSync('tags_raw.txt', tags.map(t => t.replace(/\\\\/g, '\\')).join('\\n'));
-            fs.writeFileSync('tags_escaped.txt', tags.join('|'));
+            fs.writeFileSync('tags_raw.txt', tags.map(t => t.raw).join('\\n'));
+            fs.writeFileSync('tags_escaped.txt', tags.map(t => t.escaped).join('|'));
             console.log('✅ Tags extracted and saved.');
           "
 
@@ -67,5 +67,6 @@ jobs:
           echo "$TAGS"
           echo "========================================"
 
-          echo "Running test cases with tags..."
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS"
+          MATCHED=$(npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS" | tee output.log)
+
+          grep -q '0 passed' output.log && echo "⚠️ No tests matched tags" && cat tags_raw.txt > missing-tags.txt || echo "✅ Tests executed"
