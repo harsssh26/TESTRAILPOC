@@ -1,4 +1,4 @@
-name: Execute Tests Based on Excel Tags
+name: Execute Tests Per Tag in Excel Priority Order
 
 on:
   workflow_dispatch:
@@ -7,12 +7,41 @@ on:
       - 'tag-priority.xlsx'
 
 jobs:
-  run-priority-tests:
+  extract-tags:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xlsx
+        run: npm install xlsx
+
+      - name: Read Excel and extract tags
+        id: set-matrix
+        run: |
+          node -e "
+          const fs = require('fs');
+          const xlsx = require('xlsx');
+          const sheet = xlsx.readFile('./tag-priority.xlsx').Sheets.Sheet1;
+          const rows = xlsx.utils.sheet_to_json(sheet, { header: 1 }).slice(1);
+          const tags = rows.map(row => row[0]).filter(Boolean);
+          const matrix = tags.map(tag => {
+            const formatted = tag.startsWith('[') ? tag : \`[\${tag}]\`;
+            const escaped = formatted.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
+            return { raw: formatted, escaped };
+          });
+          fs.writeFileSync('matrix.json', JSON.stringify({ include: matrix }, null, 2));
+          console.log('::set-output name=matrix::' + JSON.stringify({ include: matrix }));
+          "
+
+  run-tests:
+    needs: extract-tags
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.extract-tags.outputs.matrix)}}
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -22,51 +51,9 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm install xlsx --save-dev
+          npm install xlsx
 
-      - name: Extract and escape tags from Excel
-        id: extract_tags
+      - name: Run tests for tag ${{ matrix.raw }}
         run: |
-          node -e "
-            const fs = require('fs');
-            const xlsx = require('xlsx');
-            const workbook = xlsx.readFile('./tag-priority.xlsx');
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-
-            const tags = [];
-
-            for (let i = 1; i < data.length; i++) {
-              const cell = (data[i][0] || '').toString().trim();
-              if (!cell) continue;
-
-              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-              const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
-              tags.push({ raw: rawTag, escaped: escapedTag });
-            }
-
-            if (tags.length === 0) {
-              console.error('❌ No valid tags found in Excel!');
-              process.exit(1);
-            }
-
-            fs.writeFileSync('tags_raw.txt', tags.map(t => t.raw).join('\\n'));
-            fs.writeFileSync('tags_escaped.txt', tags.map(t => t.escaped).join('|'));
-            console.log('✅ Tags extracted and saved.');
-          "
-
-      - name: Run tests with tags
-        run: |
-          TAGS=$(cat tags_escaped.txt)
-
-          echo "========================================"
-          echo "RAW TAGS:"
-          cat tags_raw.txt
-          echo "----------------------------------------"
-          echo "ESCAPED GREP STRING:"
-          echo "$TAGS"
-          echo "========================================"
-
-          MATCHED=$(npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAGS" | tee output.log)
-
-          grep -q '0 passed' output.log && echo "⚠️ No tests matched tags" && cat tags_raw.txt > missing-tags.txt || echo "✅ Tests executed"
+          echo "Running tests for tag: ${{ matrix.raw }}"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="${{ matrix.escaped }}"
