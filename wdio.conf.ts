@@ -2,7 +2,7 @@
 
 import { config as dotenvConfig } from 'dotenv';
 
-dotenvConfig(); // Load .env file
+dotenvConfig();
 
 export const config: any = {
   runner: 'local',
@@ -23,7 +23,11 @@ export const config: any = {
   capabilities: [{
     browserName: 'chrome',
     'goog:chromeOptions': {
-      args: ['--headless', '--disable-gpu']
+      args: ['--headless=new', '--disable-gpu'],
+      debuggerAddress: null // ⛔ prevent BiDi fallback
+    },
+    'wdio:devtoolsOptions': {
+      enableBidi: false // ⛔ force classic protocol
     }
   }],
 
