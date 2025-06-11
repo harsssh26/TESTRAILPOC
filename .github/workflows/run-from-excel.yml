@@ -24,6 +24,11 @@ jobs:
           npm ci
           npm install xlsx --save-dev
 
+      - name: Ensure Excel was pushed, not just code
+        run: |
+          git fetch origin ${{ github.ref }}
+          git diff --name-only origin/${{ github.ref_name }} | grep 'tag-priority.xlsx' || (echo " tag-priority.xlsx not uploaded — exiting" && exit 1)
+
       - name: Extract and run tags sequentially
         run: |
           echo "Reading Excel and running each tag one by one..."
@@ -45,7 +50,7 @@ jobs:
             }
 
             if (tags.length === 0) {
-              console.error('No valid tags found in Excel!');
+              console.error(' No valid tags found in Excel!');
               process.exit(1);
             }
 
@@ -60,19 +65,26 @@ jobs:
             ESCAPED=$(jq -r ".[$i].escaped" tag_list.json)
 
             echo "========================================"
-            echo " Running tests for tag: $RAW"
+            echo "Running tests for tag: $RAW"
             echo "Escaped grep: $ESCAPED"
             echo "========================================"
 
             npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee output_$i.log
 
             if grep -q '0 passed' output_$i.log; then
-              echo "No tests matched tag: $RAW"
+              echo " No tests matched tag: $RAW"
               echo "$RAW" >> missing-tags.txt
             else
               echo " Tag $RAW executed with tests"
             fi
           done
 
-          echo " Cleaning up temporary and Excel input files..."
-          rm -f tag-priority.xlsx tag_list.json missing-tags.txt output_*.log
+      - name: Cleanup uploaded Excel
+        run: |
+          git rm -f tag-priority.xlsx || true
+          git commit -m "Remove tag-priority.xlsx post execution" || echo "Nothing to commit"
+          git push origin || echo "Nothing to push"
+
+      - name: Cleanup temp files
+        run: |
+          rm -f tag_list.json missing-tags.txt output_*.log
