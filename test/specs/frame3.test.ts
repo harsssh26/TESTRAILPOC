@@ -65,7 +65,7 @@ describe('Frame Testing with WebDriverIO', () => {
         await framePage.normalTest();
     });
 
-    it('[FRAME3] C85 test78', async () => {
+    it('[ABCD] C85 test78', async () => {
         await framePage.normalTest();
     });
 
