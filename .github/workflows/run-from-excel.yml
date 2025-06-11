@@ -6,6 +6,9 @@ on:
     paths:
       - 'tag-priority.xlsx'
 
+permissions:
+  contents: write
+
 jobs:
   run-priority-tests:
     runs-on: ubuntu-latest
@@ -13,6 +16,12 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Setup Git identity and remote auth
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -23,11 +32,12 @@ jobs:
         run: |
           npm ci
           npm install xlsx --save-dev
+          sudo apt-get install jq
 
-      - name: Abort if tag-priority.xlsx not found
+      - name: Check if Excel file exists
         run: |
-          if [ ! -f tag-priority.xlsx ]; then
-            echo " tag-priority.xlsx not uploaded — exiting"
+          if [ ! -f "tag-priority.xlsx" ]; then
+            echo " tag-priority.xlsx not found. Skipping test run."
             exit 1
           fi
 
@@ -52,7 +62,7 @@ jobs:
             }
 
             if (tags.length === 0) {
-              console.error('No valid tags found in Excel!');
+              console.error(' No valid tags found in Excel!');
               process.exit(1);
             }
 
@@ -60,14 +70,14 @@ jobs:
           "
 
           TAG_COUNT=$(jq length tag_list.json)
-          echo " Found $TAG_COUNT tags"
+          echo "Found $TAG_COUNT tags"
 
           for i in $(seq 0 $((TAG_COUNT - 1))); do
             RAW=$(jq -r ".[$i].raw" tag_list.json)
             ESCAPED=$(jq -r ".[$i].escaped" tag_list.json)
 
             echo "========================================"
-            echo " Running tests for tag: $RAW"
+            echo "Running tests for tag: $RAW"
             echo "Escaped grep: $ESCAPED"
             echo "========================================"
 
@@ -77,7 +87,7 @@ jobs:
               echo "No tests matched tag: $RAW"
               echo "$RAW" >> missing-tags.txt
             else
-              echo " Tag $RAW executed with tests"
+              echo "Tag $RAW executed with tests"
             fi
           done
 
@@ -87,7 +97,6 @@ jobs:
           git commit -m "Remove tag-priority.xlsx post execution" || echo "Nothing to commit"
           git push origin || echo "Nothing to push"
 
-      - name: Final cleanup
+      - name: Final cleanup of local temp files
         run: |
-          echo " Cleaning up temp files..."
-          rm -f tag-priority.xlsx tag_list.json missing-tags.txt output_*.log
+          rm -f tag_list.json missing-tags.txt output_*.log
