@@ -45,7 +45,7 @@ jobs:
             }
 
             if (tags.length === 0) {
-              console.error('❌ No valid tags found in Excel!');
+              console.error('No valid tags found in Excel!');
               process.exit(1);
             }
 
@@ -53,25 +53,26 @@ jobs:
           "
 
           TAG_COUNT=$(jq length tag_list.json)
-          echo "✅ Found $TAG_COUNT tags"
+          echo " Found $TAG_COUNT tags"
 
           for i in $(seq 0 $((TAG_COUNT - 1))); do
             RAW=$(jq -r ".[$i].raw" tag_list.json)
             ESCAPED=$(jq -r ".[$i].escaped" tag_list.json)
 
             echo "========================================"
-            echo "▶️ Running tests for tag: $RAW"
+            echo " Running tests for tag: $RAW"
             echo "Escaped grep: $ESCAPED"
             echo "========================================"
 
-            # Execute test run
             npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee output_$i.log
 
-            # Check if any test matched
             if grep -q '0 passed' output_$i.log; then
-              echo "⚠️ No tests matched tag: $RAW"
+              echo "No tests matched tag: $RAW"
               echo "$RAW" >> missing-tags.txt
             else
-              echo "✅ Tag $RAW executed with tests"
+              echo " Tag $RAW executed with tests"
             fi
           done
+
+          echo " Cleaning up temporary and Excel input files..."
+          rm -f tag-priority.xlsx tag_list.json missing-tags.txt output_*.log
