@@ -23,11 +23,10 @@ export const config: any = {
   capabilities: [{
     browserName: 'chrome',
     'goog:chromeOptions': {
-      args: ['--headless=new', '--disable-gpu'],
-      debuggerAddress: null // ⛔ prevent BiDi fallback
+      args: ['--headless=new', '--disable-gpu']
     },
     'wdio:devtoolsOptions': {
-      enableBidi: false // ⛔ force classic protocol
+      enableBidi: false // disable BiDi fallback
     }
   }],
 
