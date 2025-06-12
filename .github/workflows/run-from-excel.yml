@@ -10,23 +10,20 @@ permissions:
   contents: write
 
 jobs:
-  extract-tags-and-dispatch:
+  extract-and-run-tags:
     runs-on: ubuntu-latest
-
-    outputs:
-      matrix: ${{ steps.extract.outputs.matrix }}
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js & deps
+      - name: Setup Node.js and install xlsx
         run: |
           sudo apt-get update && sudo apt-get install -y jq
           npm install xlsx
 
-      - name: Read tags from Excel
-        id: extract
+      - name: Read tags from Excel into env
+        id: read
         run: |
           node -e "
             const fs = require('fs');
@@ -34,25 +31,40 @@ jobs:
             const workbook = xlsx.readFile('./tag-priority.xlsx');
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-
             const tags = [];
+
             for (let i = 1; i < data.length; i++) {
               const cell = (data[i][0] || '').toString().trim();
               if (!cell) continue;
-              tags.push({ 'scenario-tags': cell.startsWith('[') ? cell : '[' + cell + ']' });
+              tags.push(cell.startsWith('[') ? cell : '[' + cell + ']');
             }
 
-            const matrix = JSON.stringify({ include: tags });
-            fs.writeFileSync('matrix.json', matrix);
-            console.log('::set-output name=matrix::' + matrix);
+            if (tags.length === 0) {
+              console.error('No valid tags found!');
+              process.exit(1);
+            }
+
+            fs.writeFileSync('tag_list.json', JSON.stringify(tags));
           "
 
-  run-tags:
-    needs: extract-tags-and-dispatch
-    if: needs.extract-tags-and-dispatch.outputs.matrix != ''
-    strategy:
-      matrix: ${{ fromJson(needs.extract-tags-and-dispatch.outputs.matrix) }}
+      - name: Call test-runner per tag in order
+        run: |
+          tags=$(jq -r '.[]' tag_list.json)
+          for tag in $tags; do
+            echo "Dispatching $tag..."
+            gh workflow run test-runner.yml \
+              --ref "${{ github.ref_name }}" \
+              -f scenario-tags="$tag"
+            sleep 10
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    uses: ./.github/workflows/test-runner.yml
-    with:
-      scenario-tags: ${{ matrix.scenario-tags }}
+      - name: Clean up Excel
+        run: |
+          git rm -f tag-priority.xlsx || true
+          git commit -m "Remove tag-priority.xlsx after dispatch" || echo "Nothing to commit"
+          git push origin || echo "Nothing to push"
+
+      - name: Cleanup
+        run: rm -f tag_list.json
