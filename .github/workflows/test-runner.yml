@@ -1,0 +1,32 @@
+name: Run Tags from Excel
+
+on:
+  workflow_call:
+    inputs:
+      scenario-tags:
+        required: true
+        type: string
+
+jobs:
+  run_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install xlsx --save-dev
+
+      - name: Run tag ${{ inputs.scenario-tags }}
+        run: |
+          echo "Running test for tag: ${{ inputs.scenario-tags }}"
+          ESCAPED_TAG=$(echo "${{ inputs.scenario-tags }}" | sed 's/\[/\\\[/g; s/\]/\\\]/g')
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED_TAG"

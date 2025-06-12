@@ -10,41 +10,24 @@ permissions:
   contents: write
 
 jobs:
-  run-priority-tests:
+  extract-tags-and-dispatch:
     runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.extract.outputs.matrix }}
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Git identity and remote auth
+      - name: Setup Node.js & deps
         run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "github-actions[bot]"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          sudo apt-get update && sudo apt-get install -y jq
+          npm install xlsx
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
+      - name: Read tags from Excel
+        id: extract
         run: |
-          npm ci
-          npm install xlsx --save-dev
-          sudo apt-get install jq
-
-      - name: Check if Excel file exists
-        run: |
-          if [ ! -f "tag-priority.xlsx" ]; then
-            echo " tag-priority.xlsx not found. Skipping test run."
-            exit 1
-          fi
-
-      - name: Extract and run tags sequentially
-        run: |
-          echo "Reading Excel and running each tag one by one..."
-
           node -e "
             const fs = require('fs');
             const xlsx = require('xlsx');
@@ -56,48 +39,20 @@ jobs:
             for (let i = 1; i < data.length; i++) {
               const cell = (data[i][0] || '').toString().trim();
               if (!cell) continue;
-              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-              const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
-              tags.push({ raw: rawTag, escaped: escapedTag });
+              tags.push({ 'scenario-tags': cell.startsWith('[') ? cell : '[' + cell + ']' });
             }
 
-            if (tags.length === 0) {
-              console.error(' No valid tags found in Excel!');
-              process.exit(1);
-            }
-
-            fs.writeFileSync('tag_list.json', JSON.stringify(tags, null, 2));
+            const matrix = JSON.stringify({ include: tags });
+            fs.writeFileSync('matrix.json', matrix);
+            console.log('::set-output name=matrix::' + matrix);
           "
 
-          TAG_COUNT=$(jq length tag_list.json)
-          echo "Found $TAG_COUNT tags"
+  run-tags:
+    needs: extract-tags-and-dispatch
+    if: needs.extract-tags-and-dispatch.outputs.matrix != ''
+    strategy:
+      matrix: ${{ fromJson(needs.extract-tags-and-dispatch.outputs.matrix) }}
 
-          for i in $(seq 0 $((TAG_COUNT - 1))); do
-            RAW=$(jq -r ".[$i].raw" tag_list.json)
-            ESCAPED=$(jq -r ".[$i].escaped" tag_list.json)
-
-            echo "========================================"
-            echo "Running tests for tag: $RAW"
-            echo "Escaped grep: $ESCAPED"
-            echo "========================================"
-
-            npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee output_$i.log
-
-            if grep -q '0 passed' output_$i.log; then
-              echo "No tests matched tag: $RAW"
-              echo "$RAW" >> missing-tags.txt
-            else
-              echo "Tag $RAW executed with tests"
-            fi
-          done
-
-      - name: Cleanup uploaded Excel
-        run: |
-          git rm -f tag-priority.xlsx || true
-          git commit -m "Remove tag-priority.xlsx post execution" || echo "Nothing to commit"
-          git push origin || echo "Nothing to push"
-
-      - name: Final cleanup of local temp files
-        run: |
-          rm -f tag_list.json missing-tags.txt output_*.log
- 
+    uses: ./.github/workflows/test-runner.yml
+    with:
+      scenario-tags: ${{ matrix.scenario-tags }}
