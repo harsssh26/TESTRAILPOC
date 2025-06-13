@@ -81,7 +81,7 @@ jobs:
 
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
-          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\\\[/g; s/\]/\\\\]/g')
+          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\[/g; s/\]/\\]/g')
           echo "==============================="
           echo "Running tests for: ${{ matrix.tag }}"
           echo "Escaped grep: $ESCAPED"
@@ -102,6 +102,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set Git Identity
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
 
       - name: Cleanup Excel
         run: |
