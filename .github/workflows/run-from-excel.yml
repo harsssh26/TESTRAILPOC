@@ -1,4 +1,4 @@
-name: Execute Tests Based on Excel Tags
+name: Execute Tests Dynamically
 
 on:
   workflow_dispatch:
@@ -11,18 +11,12 @@ permissions:
 
 jobs:
   extract-tags:
+    name: Extract Tags from Excel
     runs-on: ubuntu-latest
     outputs:
-      extracted: ${{ steps.extract.outputs.done }}
+      tag_list: ${{ steps.extract.outputs.tag_list }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Git
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "github-actions[bot]"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,11 +25,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
           npm install xlsx --save-dev
           sudo apt-get install jq
 
-      - name: Extract tags from Excel
+      - name: Extract and format tag list
         id: extract
         run: |
           node -e "
@@ -50,8 +43,7 @@ jobs:
               const cell = (data[i][0] || '').toString().trim();
               if (!cell) continue;
               const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-              const escapedTag = rawTag.replace(/\[/g, '\\\\[').replace(/\]/g, '\\\\]');
-              tags.push({ raw: rawTag, escaped: escapedTag });
+              tags.push(rawTag);
             }
 
             if (tags.length === 0) {
@@ -59,167 +51,53 @@ jobs:
               process.exit(1);
             }
 
-            fs.writeFileSync('tag_list.json', JSON.stringify(tags, null, 2));
+            console.log('Tags Extracted:', tags);
+            fs.writeFileSync('tags.json', JSON.stringify(tags));
           "
 
-      - name: Upload tag list for jobs
-        uses: actions/upload-artifact@v4
-        with:
-          name: tag_list
-          path: tag_list.json
+          TAG_LIST=$(jq -c . tags.json)
+          echo "tag_list=$TAG_LIST" >> $GITHUB_OUTPUT
 
-  run-frame3:
-    name: Run [FRAME3]
+  run-tests:
+    name: Run Tests for Each Tag
     needs: extract-tags
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [FRAME3]
-        run: |
-          TAG=$(jq -r '.[] | select(.raw=="[FRAME3]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_frame3.log
-          EXIT_CODE=$?
-          if grep -q '0 passed' output_frame3.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [FRAME3]"
-          else
-            echo "✅ [FRAME3] executed successfully"
-          fi
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        tag: ${{ fromJSON(needs.extract-tags.outputs.tag_list) }}
 
-  run-frame:
-    name: Run [FRAME]
-    needs: run-frame3
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [FRAME]
-        run: |
-          TAG=$(jq -r '.[] | select(.raw=="[FRAME]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_frame.log
-          EXIT_CODE=$?
-          if grep -q '0 passed' output_frame.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [FRAME]"
-          else
-            echo "✅ [FRAME] executed successfully"
-          fi
 
-  run-frame2:
-    name: Run [FRAME2]
-    needs: run-frame
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [FRAME2]
-        run: |
-          TAG=$(jq -r '.[] | select(.raw=="[FRAME2]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_frame2.log
-          EXIT_CODE=$?
-          if grep -q '0 passed' output_frame2.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [FRAME2]"
-          else
-            echo "✅ [FRAME2] executed successfully"
-          fi
 
-  run-frame9:
-    name: Run [FRAME9]
-    needs: run-frame2
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [FRAME9]
+      - name: Run tests for tag ${{ matrix.tag }}
         run: |
-          TAG=$(jq -r '.[] | select(.raw=="[FRAME9]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_frame9.log
-          EXIT_CODE=$?
-          if grep -q '0 passed' output_frame9.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [FRAME9]"
-          else
-            echo "✅ [FRAME9] executed successfully"
-          fi
+          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\\\[/g; s/\]/\\\\]/g')
+          echo "Running tests for: ${{ matrix.tag }}"
+          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
-  run-ck:
-    name: Run [CK]
-    needs: run-frame9
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [CK]
-        run: |
-          TAG=$(jq -r '.[] | select(.raw=="[CK]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_ck.log
           EXIT_CODE=$?
-          if grep -q '0 passed' output_ck.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [CK]"
+          if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
+            echo " [${{ matrix.tag }}] failed or no tests matched"
           else
-            echo "✅ [CK] executed successfully"
-          fi
-
-  run-mac:
-    name: Run [MAC]
-    needs: run-ck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: actions/download-artifact@v4
-        with:
-          name: tag_list
-      - name: Execute Tag [MAC]
-        run: |
-          TAG=$(jq -r '.[] | select(.raw=="[MAC]") | .escaped' tag_list.json)
-          npx wdio run ./wdio.conf.ts --mochaOpts.grep="$TAG" | tee output_mac.log
-          EXIT_CODE=$?
-          if grep -q '0 passed' output_mac.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ Failed or no tests matched tag: [MAC]"
-          else
-            echo "✅ [MAC] executed successfully"
+            echo " [${{ matrix.tag }}] passed successfully"
           fi
 
   cleanup:
     name: Final Cleanup
-    needs: run-mac
+    needs: run-tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cleanup uploaded Excel
+      - name: Cleanup Excel
         run: |
           git rm -f tag-priority.xlsx || true
-          git commit -m "Remove tag-priority.xlsx post execution" || echo "Nothing to commit"
+          git commit -m "Remove Excel after test run" || echo "Nothing to commit"
           git push origin || echo "Nothing to push"
-
-      - name: Final cleanup of local temp files
-        run: |
-          rm -f tag_list.json output_*.log
