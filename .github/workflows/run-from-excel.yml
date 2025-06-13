@@ -82,12 +82,13 @@ jobs:
             echo "========================================"
 
             npx wdio run ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee output_$i.log
+            EXIT_CODE=$?
 
-            if grep -q '0 passed' output_$i.log; then
-              echo "No tests matched tag: $RAW"
+            if grep -q '0 passed' output_$i.log || [ $EXIT_CODE -ne 0 ]; then
+              echo " Failed or no tests matched tag: $RAW"
               echo "$RAW" >> missing-tags.txt
             else
-              echo "Tag $RAW executed with tests"
+              echo " Tag $RAW executed successfully"
             fi
           done
 
