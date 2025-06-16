@@ -47,11 +47,11 @@ jobs:
             }
 
             if (tags.length === 0) {
-              console.error('❌ No valid tags found in Excel!');
+              console.error('No valid tags found in Excel!');
               process.exit(1);
             }
 
-            console.log('✅ Tags Extracted:', tags);
+            console.log(' Tags Extracted:', tags);
             fs.writeFileSync('tags.json', JSON.stringify(tags));
           "
 
@@ -91,9 +91,9 @@ jobs:
 
           EXIT_CODE=$?
           if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
-            echo "❌ [${{ matrix.tag }}] failed or no tests matched"
+            echo " [${{ matrix.tag }}] failed or no tests matched"
           else
-            echo "✅ [${{ matrix.tag }}] passed successfully"
+            echo " [${{ matrix.tag }}] passed successfully"
           fi
 
   cleanup:
