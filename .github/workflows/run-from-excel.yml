@@ -92,6 +92,7 @@ jobs:
           EXIT_CODE=$?
           if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
             echo " [${{ matrix.tag }}] failed or no tests matched"
+            exit 1
           else
             echo " [${{ matrix.tag }}] passed successfully"
           fi
