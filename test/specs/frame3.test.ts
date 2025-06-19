@@ -1,6 +1,6 @@
 // /test/specs/frame3.test.ts
 import framePage from '../pageobjects/frame.page.js';
-
+import fs from 'fs'
 describe('Frame Testing with WebDriverIO', () => {
     beforeEach(async () => {
         await framePage.open();
@@ -55,6 +55,10 @@ describe('Frame Testing with WebDriverIO', () => {
 
     it('[FRAME3] C82 test75', async () => {
         await framePage.normalTest();
+        const frameValue = 'FRAME3_GENERATED_VALUE';
+        const data = { sharedKey: frameValue };
+        fs.writeFileSync('shared-data.json', JSON.stringify(data), 'utf-8');
+        console.log('Written to shared-data.json:', data);
     });
 
     it('[CK] C83 test76', async () => {

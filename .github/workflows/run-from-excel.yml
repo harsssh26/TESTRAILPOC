@@ -81,7 +81,7 @@ jobs:
 
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
-          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\[/g; s/\]/\\]/g')
+          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\\[/\\\\[/g; s/\\]/\\\\]/g')
           echo "==============================="
           echo "Running tests for: ${{ matrix.tag }}"
           echo "Escaped grep: $ESCAPED"
@@ -89,6 +89,22 @@ jobs:
 
           npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
+      - name: Upload shared JSON if FRAME3
+        if: contains(matrix.tag, '[FRAME3]')
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-data
+          path: shared-data.json
+
+      - name: Download shared JSON if FRAME1
+        if: contains(matrix.tag, '[FRAME1]')
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-data
+          path: .
+
+      - name: Check test results
+        run: |
           EXIT_CODE=$?
           if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
             echo " [${{ matrix.tag }}] failed or no tests matched"
@@ -100,7 +116,7 @@ jobs:
   cleanup:
     name: Final Cleanup
     needs: run-tests
-    if: always()  
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
