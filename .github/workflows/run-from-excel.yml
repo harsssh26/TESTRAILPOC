@@ -79,6 +79,13 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
+      - name: Download shared JSON if FRAME1
+        if: contains(matrix.tag, '[FRAME1]')
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-data
+          path: .
+
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
           ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\\[/\\\\[/g; s/\\]/\\\\]/g')
@@ -95,13 +102,6 @@ jobs:
         with:
           name: shared-data
           path: shared-data.json
-
-      - name: Download shared JSON if FRAME1
-        if: contains(matrix.tag, '[FRAME1]')
-        uses: actions/download-artifact@v4
-        with:
-          name: shared-data
-          path: .
 
       - name: Check test results
         run: |
