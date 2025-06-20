@@ -28,7 +28,7 @@ jobs:
           npm install xlsx --save-dev
           sudo apt-get install jq
 
-      - name: Extract and format tag list
+      - name: Extract and format tag list + previous tag map
         id: extract
         run: |
           node -e "
@@ -39,24 +39,29 @@ jobs:
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
             const tags = [];
+            const prevMap = {};
             for (let i = 1; i < data.length; i++) {
-              const cell = (data[i][0] || '').toString().trim();
-              if (!cell) continue;
-              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-              tags.push(rawTag);
+              const current = (data[i][0] || '').toString().trim();
+              const prev = (data[i - 1]?.[0] || '').toString().trim();
+              if (!current) continue;
+              const currTag = current.startsWith('[') ? current : '[' + current + ']';
+              const prevTag = prev.startsWith('[') ? prev : '[' + prev + ']';
+              tags.push(currTag);
+              prevMap[currTag] = i === 1 ? null : prevTag;
             }
 
-            if (tags.length === 0) {
-              console.error('No valid tags found in Excel!');
-              process.exit(1);
-            }
-
-            console.log(' Tags Extracted:', tags);
             fs.writeFileSync('tags.json', JSON.stringify(tags));
+            fs.writeFileSync('previous-tag.json', JSON.stringify(prevMap));
           "
 
           TAG_LIST=$(jq -c . tags.json)
           echo "tag_list=$TAG_LIST" >> $GITHUB_OUTPUT
+
+      - name: Upload previous-tag map
+        uses: actions/upload-artifact@v4
+        with:
+          name: previous-tag
+          path: previous-tag.json
 
   run-tests:
     name: Run Tests for Each Tag
@@ -76,14 +81,31 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install project dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Download shared-data.zip from previous job (if exists)
+      - name: Download previous-tag.json
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-tag
+          path: .
+
+      - name: Determine previous tag
+        id: prevtag
+        run: |
+          PREV_TAG=$(node -e "
+            const fs = require('fs');
+            const map = JSON.parse(fs.readFileSync('previous-tag.json'));
+            console.log(map['${{ matrix.tag }}'] || '');
+          ")
+          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+
+      - name: Download shared-data.zip from previous tag
+        if: ${{ steps.prevtag.outputs.prev_tag != '' }}
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
-          name: shared-data
+          name: shared-data-${{ steps.prevtag.outputs.prev_tag }}
           path: .
 
       - name: Unzip shared-data
