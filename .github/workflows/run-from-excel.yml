@@ -79,8 +79,8 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Download shared JSON if FRAME1
-        if: contains(matrix.tag, '[FRAME1]')
+      - name: Download shared-data.json (if exists)
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: shared-data
@@ -96,8 +96,8 @@ jobs:
 
           npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
-      - name: Upload shared JSON if FRAME3
-        if: contains(matrix.tag, '[FRAME3]')
+      - name: Upload shared-data.json after test
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: shared-data
