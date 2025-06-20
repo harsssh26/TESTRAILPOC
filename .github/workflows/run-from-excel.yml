@@ -79,7 +79,7 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Download previous shared-data artifact (if exists)
+      - name: Download shared-data.zip from previous job (if exists)
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
@@ -103,11 +103,11 @@ jobs:
         if: always()
         run: zip -j shared-data.zip shared-data.json || echo "No file to zip"
 
-      - name: Upload unique artifact shared-data-${{ matrix.tag }}
+      - name: Upload zipped shared-data.json with tag-based name
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: shared-data
+          name: shared-data-${{ matrix.tag }}
           path: shared-data.zip
 
       - name: Check test results
