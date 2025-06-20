@@ -79,12 +79,16 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Download shared-data.json (if exists)
+      - name: Download shared-data.zip (if exists)
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: shared-data
           path: .
+
+      - name: Unzip shared-data
+        if: always()
+        run: unzip -o shared-data.zip || echo "No zip file found"
 
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
@@ -96,12 +100,16 @@ jobs:
 
           npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
-      - name: Upload shared-data.json after test
+      - name: Zip shared-data.json after test
+        if: always()
+        run: zip -j shared-data.zip shared-data.json || echo "No file to zip"
+
+      - name: Upload zipped shared-data.json
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: shared-data
-          path: shared-data.json
+          path: shared-data.zip
 
       - name: Check test results
         run: |
