@@ -79,7 +79,7 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Download shared-data.zip (if exists)
+      - name: Download previous shared-data artifact (if exists)
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
@@ -97,14 +97,13 @@ jobs:
           echo "Running tests for: ${{ matrix.tag }}"
           echo "Escaped grep: $ESCAPED"
           echo "==============================="
-
           npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
       - name: Zip shared-data.json after test
         if: always()
         run: zip -j shared-data.zip shared-data.json || echo "No file to zip"
 
-      - name: Upload zipped shared-data.json
+      - name: Upload unique artifact shared-data-${{ matrix.tag }}
         if: always()
         uses: actions/upload-artifact@v4
         with:
