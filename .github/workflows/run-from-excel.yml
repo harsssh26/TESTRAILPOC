@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag_list: ${{ steps.extract.outputs.tag_list }}
+      max_parallel: ${{ steps.extract.outputs.max_parallel }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +30,7 @@ jobs:
           npm install xlsx --save-dev
           sudo apt-get install jq
 
-      - name: Extract and format tag list
+      - name: Extract tags and validate mode
         id: extract
         run: |
           node -e "
@@ -38,80 +40,96 @@ jobs:
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
+            let mode = null;
             const tags = [];
+
             for (let i = 1; i < data.length; i++) {
-              const cell = (data[i][0] || '').toString().trim();
-              if (!cell) continue;
-              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
-              tags.push(rawTag);
+              const row = data[i];
+              const tag = (row[0] || '').toString().trim();
+              const modeCell = (row[2] || '').toString().toLowerCase().trim();
+
+              if (tag === '#GLOBAL') {
+                if (modeCell === 'sequential' || modeCell === 'parallel') {
+                  mode = modeCell;
+                } else {
+                  console.error('❌ #GLOBAL row is present but Mode is invalid or empty. Use \"parallel\" or \"sequential\".');
+                  process.exit(1);
+                }
+                continue;
+              }
+
+              if (!tag || tag.startsWith('#')) continue;
+              const formattedTag = tag.startsWith('[') ? tag : '[' + tag + ']';
+              tags.push(formattedTag);
             }
 
-            if (tags.length === 0) {
-              console.error('No valid tags found in Excel!');
+            if (!mode) {
+              console.error('❌ Missing required #GLOBAL row with valid Mode (parallel/sequential) in column C.');
               process.exit(1);
             }
 
-            console.log(' Tags Extracted:', tags);
+            if (tags.length === 0) {
+              console.error('❌ No valid test tags found in Excel.');
+              process.exit(1);
+            }
+
+            const maxParallel = mode === 'sequential' ? 1 : 4;
+
             fs.writeFileSync('tags.json', JSON.stringify(tags));
+            fs.writeFileSync('mode.json', JSON.stringify({ maxParallel }));
+
+            console.log('✅ Global Execution Mode:', mode.toUpperCase());
+            console.log('✅ Tags to Execute:', tags);
           "
 
           TAG_LIST=$(jq -c . tags.json)
+          MAX_PARALLEL=$(jq -r .maxParallel mode.json)
           echo "tag_list=$TAG_LIST" >> $GITHUB_OUTPUT
+          echo "max_parallel=$MAX_PARALLEL" >> $GITHUB_OUTPUT
 
   run-tests:
-    name: Run Tests for Each Tag
+    name: Run Tests per Tag
     needs: extract-tags
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: ${{ fromJSON(needs.extract-tags.outputs.max_parallel) }}
       matrix:
         tag: ${{ fromJSON(needs.extract-tags.outputs.tag_list) }}
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install project dependencies
+      - name: Install dependencies
         run: npm ci
 
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
           ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\[/g; s/\]/\\]/g')
-          echo "==============================="
           echo "Running tests for: ${{ matrix.tag }}"
-          echo "Escaped grep: $ESCAPED"
-          echo "==============================="
-
-          npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
+          npx wdio ./wdio.conf.ts --mochaOpts.grep=\"$ESCAPED\" | tee test_${{ matrix.tag }}.log
 
           EXIT_CODE=$?
           if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
             echo " [${{ matrix.tag }}] failed or no tests matched"
             exit 1
           else
-            echo " [${{ matrix.tag }}] passed successfully"
+            echo " [${{ matrix.tag }}] passed"
           fi
 
   cleanup:
     name: Final Cleanup
     needs: run-tests
-    if: always()  
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set Git Identity
-        run: |
+      - run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "github-actions[bot]"
-
-      - name: Cleanup Excel
-        run: |
           git rm -f tag-priority.xlsx || true
           git commit -m "Remove Excel after test run" || echo "Nothing to commit"
           git push origin || echo "Nothing to push"
