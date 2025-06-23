@@ -12,7 +12,7 @@ describe('Frame Testing with WebDriverIO', () => {
 
     it('[FRAME1] C25 test18', async () => {
         await framePage.normalTest();
-         const raw = fs.readFileSync('shared-data.json', 'utf-8');
+        const raw = fs.readFileSync('shared-data.json', 'utf-8');
         const json = JSON.parse(raw);
         console.log('Read from shared-data.json:', json.sharedKey);
         await framePage.normalTest();

@@ -1,6 +1,6 @@
 // /test/specs/frame2.test.ts
 import framePage from '../pageobjects/frame.page.js';
-
+import fs from 'fs'
 
 describe('Frame Testing with WebDriverIO', () => {
     beforeEach(async () => {
@@ -20,6 +20,10 @@ describe('Frame Testing with WebDriverIO', () => {
     });
 
     it('[FRAME2] C58 test51', async () => {
+        await framePage.normalTest();
+        const raw = fs.readFileSync('shared-data.json', 'utf-8');
+        const json = JSON.parse(raw);
+        console.log('Read from shared-data.json:', json.sharedKey);
         await framePage.normalTest();
     });
 
