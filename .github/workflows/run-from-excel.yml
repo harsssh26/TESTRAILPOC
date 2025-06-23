@@ -28,7 +28,7 @@ jobs:
           npm install xlsx --save-dev
           sudo apt-get install jq
 
-      - name: Extract and format tag list + previous tag map
+      - name: Extract and format tag list
         id: extract
         run: |
           node -e "
@@ -39,29 +39,24 @@ jobs:
             const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
             const tags = [];
-            const prevMap = {};
             for (let i = 1; i < data.length; i++) {
-              const current = (data[i][0] || '').toString().trim();
-              const prev = (data[i - 1]?.[0] || '').toString().trim();
-              if (!current) continue;
-              const currTag = current.startsWith('[') ? current : '[' + current + ']';
-              const prevTag = prev.startsWith('[') ? prev : '[' + prev + ']';
-              tags.push(currTag);
-              prevMap[currTag] = i === 1 ? null : prevTag;
+              const cell = (data[i][0] || '').toString().trim();
+              if (!cell) continue;
+              const rawTag = cell.startsWith('[') ? cell : '[' + cell + ']';
+              tags.push(rawTag);
             }
 
+            if (tags.length === 0) {
+              console.error('No valid tags found in Excel!');
+              process.exit(1);
+            }
+
+            console.log(' Tags Extracted:', tags);
             fs.writeFileSync('tags.json', JSON.stringify(tags));
-            fs.writeFileSync('previous-tag.json', JSON.stringify(prevMap));
           "
 
           TAG_LIST=$(jq -c . tags.json)
           echo "tag_list=$TAG_LIST" >> $GITHUB_OUTPUT
-
-      - name: Upload previous-tag map
-        uses: actions/upload-artifact@v4
-        with:
-          name: previous-tag
-          path: previous-tag.json
 
   run-tests:
     name: Run Tests for Each Tag
@@ -81,59 +76,19 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm ci
-
-      - name: Download previous-tag.json
-        uses: actions/download-artifact@v4
-        with:
-          name: previous-tag
-          path: .
-
-      - name: Determine previous tag
-        id: prevtag
-        run: |
-          PREV_TAG=$(node -e "
-            const fs = require('fs');
-            const map = JSON.parse(fs.readFileSync('previous-tag.json'));
-            console.log(map['${{ matrix.tag }}'] || '');
-          ")
-          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
-
-      - name: Download shared-data.zip from previous tag
-        if: ${{ steps.prevtag.outputs.prev_tag != '' }}
-        continue-on-error: true
-        uses: actions/download-artifact@v4
-        with:
-          name: shared-data-${{ steps.prevtag.outputs.prev_tag }}
-          path: .
-
-      - name: Unzip shared-data
-        if: always()
-        run: unzip -o shared-data.zip || echo "No zip file found"
 
       - name: Run tests for tag ${{ matrix.tag }}
         run: |
-          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\\[/\\\\[/g; s/\\]/\\\\]/g')
+          ESCAPED=$(echo '${{ matrix.tag }}' | sed 's/\[/\\[/g; s/\]/\\]/g')
           echo "==============================="
           echo "Running tests for: ${{ matrix.tag }}"
           echo "Escaped grep: $ESCAPED"
           echo "==============================="
+
           npx wdio ./wdio.conf.ts --mochaOpts.grep="$ESCAPED" | tee test_${{ matrix.tag }}.log
 
-      - name: Zip shared-data.json after test
-        if: always()
-        run: zip -j shared-data.zip shared-data.json || echo "No file to zip"
-
-      - name: Upload zipped shared-data.json with tag-based name
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: shared-data-${{ matrix.tag }}
-          path: shared-data.zip
-
-      - name: Check test results
-        run: |
           EXIT_CODE=$?
           if grep -q '0 passed' test_${{ matrix.tag }}.log || [ $EXIT_CODE -ne 0 ]; then
             echo " [${{ matrix.tag }}] failed or no tests matched"
@@ -145,7 +100,7 @@ jobs:
   cleanup:
     name: Final Cleanup
     needs: run-tests
-    if: always()
+    if: always()  
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
